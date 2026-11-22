@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Moss Writing Desk</title>
+<!--
+  Moss Writing Desk
+  Made by LelulaGames (https://lelula.itch.io). MIT license, see LICENSE.
+  Shared as-is. If it breaks, have your AI fix it.
+
+  This page is just the tool. Your writing stays with you: the page sends nothing anywhere.
+  No web fonts, no trackers, no analytics.
+-->
+<style>
+/* ---------- themes ---------- */
+:root,[data-theme=dark]{
+  --bg:#121418; --panel:#171a20; --raise:#20242c; --line:#2a2f38;
+  --fg:#e7e2d7; --muted:#959ba6; --faint:#6b717c;
+  --accent:#c9a45c; --accent-ink:#17120a; --good:#86b893; --warn:#e0956a;
+  --shadow:rgba(0,0,0,.45); color-scheme:dark;
+}
+[data-theme=light]{
+  --bg:#f7f5f0; --panel:#efece5; --raise:#e4e0d6; --line:#d3cec2;
+  --fg:#24221e; --muted:#635f57; --faint:#8f8a80;
+  --accent:#8a6424; --accent-ink:#fffaf0; --good:#3f7a4f; --warn:#b0501f;
+  --shadow:rgba(40,30,10,.18); color-scheme:light;
+}
+[data-theme=sepia]{
+  --bg:#f2e7d3; --panel:#eadcc3; --raise:#dfcfb2; --line:#cfbd9c;
+  --fg:#3a2e21; --muted:#6f5c46; --faint:#97826a;
+  --accent:#94521f; --accent-ink:#fff6e8; --good:#566f35; --warn:#a8401f;
+  --shadow:rgba(60,40,10,.2); color-scheme:light;
+}
+[data-theme=moss]{
+  --bg:#161d18; --panel:#1b241e; --raise:#243028; --line:#314036;
+  --fg:#ece5cf; --muted:#a2aa96; --faint:#76806d;
+  --accent:#a6c47f; --accent-ink:#132012; --good:#a6c47f; --warn:#e2a46c;
+  --shadow:rgba(0,0,0,.45); color-scheme:dark;
+}
+:root{
+  --ui:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --page:"Literata","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+html{box-sizing:border-box;height:100%;background:var(--bg)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:15px/1.5 var(--ui)}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+.books{display:flex;gap:6px;align-items:center;margin-bottom:-8px}
+.books select{flex:1;min-width:0;background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:5px 6px;font-size:.85rem;color:var(--fg)}
+#app{display:grid;grid-template-columns:280px minmax(0,1fr);height:100%}
+
+/* ---------- binder ---------- */
+aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:22px;min-height:0;overflow:auto;
+  padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px}
+#bookTitle{width:100%;background:none;border:0;border-bottom:1px solid transparent;font:600 1.25rem/1.25 var(--page);padding:2px 0}
+#bookTitle:hover,#bookTitle:focus{border-bottom-color:var(--line);outline:none}
+.goal{display:grid;gap:6px}
+.goal .nums{display:flex;align-items:baseline;gap:6px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.goal .total{font-size:1.35rem;font-weight:500}
+.goal .of{color:var(--muted);font-size:.85rem}
+#goalIn{width:7ch;background:none;border:0;border-bottom:1px dashed var(--line);color:var(--muted);font:inherit;padding:0}
+.track{position:relative;height:6px;background:var(--raise);border-radius:3px;overflow:visible}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:3px;width:0;transition:width .4s}
+.pace{position:absolute;top:-3px;width:2px;height:12px;background:var(--fg);opacity:.55;border-radius:1px}
+.goal .sub{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.82rem;color:var(--muted)}
+.goal .sub b{color:var(--fg);font-weight:700}
+.goalbtn{display:grid;gap:7px;width:calc(100% + 12px);margin:-2px -6px;padding:6px;background:none;border:0;border-radius:8px;text-align:left;cursor:pointer}
+.goalbtn:hover{background:var(--raise)}
+.goalbtn .track,.goalbtn .sub{display:flex}
+.goalbtn .track{display:block}
+.chev{flex:none;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.goalbtn:hover .chev,.goalbtn[aria-expanded=true] .chev{color:var(--accent)}
+.chartp{display:grid;gap:10px;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.chartwrap{position:relative;height:120px;border-bottom:1px solid var(--line)}
+.chart{height:100%;display:grid;grid-template-columns:repeat(var(--n,30),minmax(0,1fr));gap:2px;align-items:end}
+.chart .col{height:100%;display:flex;align-items:flex-end;background:none;border:0;padding:0;cursor:pointer;min-width:0}
+.chart .col:disabled{cursor:default}
+.chart .cb{display:block;width:100%;min-height:2px;background:var(--accent);opacity:.62;border-radius:2px 2px 0 0}
+.chart .col.today .cb{opacity:1}
+.chart .col.future .cb{background:var(--raise);opacity:1}
+.chart .col.sel .cb{opacity:1;box-shadow:0 0 0 1px var(--bg),0 0 0 2px var(--fg)}
+.chartwrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.chartwrap .par{stroke:var(--fg);stroke-opacity:.55;stroke-width:1.5;stroke-dasharray:4 3;fill:none}
+.chart-x{display:flex;justify-content:space-between;font:11px var(--mono);color:var(--faint);margin-top:-6px}
+.readout{font:13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.readout b{color:var(--fg);font-weight:500}
+.cstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cstats div{display:grid;gap:1px}
+.cstats span{font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);line-height:1.25}
+.cstats b{font:500 .95rem var(--mono);font-variant-numeric:tabular-nums}
+.legend{font-size:.75rem;color:var(--faint);line-height:1.4}
+
+.sec{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.label{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.add{background:none;border:1px solid var(--line);border-radius:5px;color:var(--muted);font-size:.78rem;padding:2px 8px;cursor:pointer}
+.add:hover{color:var(--fg);border-color:var(--accent)}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:1px}
+.row{display:flex;align-items:center;gap:2px;border-radius:6px}
+.row .open{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:10px;background:none;border:0;border-radius:6px;padding:6px 8px;text-align:left;cursor:pointer}
+.row .open:hover{background:var(--raise)}
+.row.on .open{background:var(--raise);color:var(--accent)}
+.row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .meta{font:12px var(--mono);color:var(--faint);font-variant-numeric:tabular-nums;flex:none}
+.row .mv{background:none;border:0;color:var(--faint);cursor:pointer;padding:4px 3px;font-size:11px;line-height:1;visibility:hidden}
+.row:hover .mv,.row.on .mv,.row .mv:focus-visible{visibility:visible}
+.row .mv:hover{color:var(--fg)}
+.empty-note{color:var(--faint);font-size:.85rem;padding:2px 8px}
+.kind{display:block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:8px 8px 2px}
+details.trash summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+details.trash .row .open{cursor:default}
+details.trash .row .open:hover{background:none}
+.tbtn{background:none;border:0;color:var(--muted);font-size:.78rem;cursor:pointer;padding:4px 6px;white-space:nowrap}
+.tbtn:hover{color:var(--fg)}
+.tbtn.armed{color:var(--warn)}
+.leftoff{margin-top:auto;display:grid;gap:6px}
+#leftOff{width:100%;min-height:70px;resize:vertical;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:.9rem;line-height:1.45}
+.store-note{font-size:.78rem;color:var(--warn)}
+.exp{display:flex;gap:6px;flex-wrap:wrap}
+.field{display:flex;gap:8px;align-items:center;font-size:.82rem;color:var(--muted)}
+.field input,.field select{flex:1;min-width:0;background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:.85rem;color:var(--fg)}
+.where{font-size:.82rem;color:var(--muted);line-height:1.45}
+.where b{color:var(--fg);font-weight:700}
+.credit{font-size:.75rem;color:var(--faint);line-height:1.5}
+.credit a{color:var(--muted)}
+.credit a:hover{color:var(--accent)}
+.toast{position:fixed;z-index:40;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(460px,calc(100vw - 32px));
+  background:var(--raise);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:.88rem;box-shadow:0 8px 30px var(--shadow)}
+
+/* ---------- desk ---------- */
+main{min-width:0;overflow:auto;position:relative}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--line);
+  padding-block:9px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));transition:opacity .25s}
+.crumb{flex:1;min-width:0;color:var(--muted);font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat{font:13px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat b{color:var(--fg);font-weight:500}
+.save{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.save::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+.save[data-s=pending]::before{background:var(--accent)}
+.save[data-s=error]::before{background:var(--warn)}
+.save[data-s=error]{color:var(--warn)}
+.btn{background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:5px 11px;font-size:.85rem;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+#menuBtn{display:none}
+
+.sheet{max-width:calc(68ch + 48px);margin:0 auto;padding-block:44px 40vh;
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.title-in{width:100%;background:none;border:0;font:600 2rem/1.2 var(--page);text-wrap:balance;padding:0;outline:none}
+.title-in::placeholder,textarea::placeholder{color:var(--faint)}
+.sheet-tools{display:flex;gap:14px;align-items:center;margin:10px 0 0;flex-wrap:wrap}
+details.summary{margin:18px 0 26px;border-left:2px solid var(--line);padding-left:14px}
+details.summary summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+details.summary summary .hint{color:var(--faint)}
+#chSummary,#bDetails{width:100%;background:none;border:0;resize:none;outline:none;font:400 .98rem/1.6 var(--page);color:var(--fg);overflow:hidden;min-height:3.2em;margin-top:8px}
+#editor{display:block;width:100%;background:none;border:0;resize:none;outline:none;overflow:hidden;
+  font:400 1.16rem/1.8 var(--page);color:var(--fg);min-height:55vh;caret-color:var(--accent)}
+.bible-kind{display:flex;gap:10px;align-items:center;margin:14px 0 22px;color:var(--muted);font-size:.88rem}
+#bKind{background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.bible-help{color:var(--faint);font-size:.85rem;margin:0 0 6px}
+#bDetails{min-height:12em;font-size:1.05rem}
+.welcome{max-width:52ch;margin:14vh auto 0;display:grid;gap:14px;text-align:left;padding-bottom:10vh;
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.welcome h1{font:600 1.7rem/1.2 var(--page);margin:0;text-wrap:balance}
+.welcome p{margin:0;color:var(--muted);line-height:1.6}
+.welcome .small{font-size:.86rem}
+.warnline{color:var(--warn);font-size:.85rem}
+.choices{display:grid;gap:10px;margin:6px 0}
+.choice{display:grid;gap:4px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{opacity:.55;cursor:default}
+.choice b{font:600 1.05rem/1.3 var(--page);color:var(--fg)}
+.choice span{color:var(--muted);font-size:.9rem;line-height:1.5}
+.choice em{color:var(--warn);font-size:.82rem;font-style:normal}
+.choice .tag{justify-self:start;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+
+/* ask Claude panel */
+.askp{position:fixed;z-index:20;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 32px));max-height:min(72vh,640px);overflow:auto;display:grid;gap:12px;align-content:start;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 40px var(--shadow)}
+.askp-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.askp-acts{display:flex;flex-wrap:wrap;gap:6px}
+.askp-acts .add{font-size:.84rem;padding:5px 10px;color:var(--fg)}
+.askp .add:disabled{opacity:.45;cursor:default}
+.askp-out{display:grid;gap:8px;white-space:pre-wrap;font:400 .96rem/1.6 var(--page);color:var(--fg)}
+.askp-out:empty{display:none}
+.askp-out .thinking{color:var(--muted);font:italic .9rem var(--ui)}
+.askp-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.askp-row:empty{display:none}
+.askp-msg{color:var(--warn);font:400 .85rem/1.45 var(--ui);white-space:normal}
+.sugg{display:grid;gap:4px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);white-space:normal}
+.sugg .t{font:700 .92rem/1.35 var(--ui)}
+.sugg .k{font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:400;margin-left:8px}
+.sugg .d{font:400 .9rem/1.5 var(--page);white-space:pre-wrap;color:var(--fg)}
+.sugg .q{font:italic .9rem/1.5 var(--page);color:var(--muted)}
+.sugg .acts{display:flex;gap:6px;margin-top:4px}
+.askp-note{margin:0;font-size:.75rem;color:var(--faint)}
+#askBtn[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
+@media (max-width:520px){.crumb{display:none}.bar{gap:8px}.save{font-size:0;gap:0}}
+
+/* focus mode */
+#app.focus{grid-template-columns:minmax(0,1fr)}
+#app.focus aside{display:none}
+#app.focus .bar{opacity:.38;border-bottom-color:transparent}
+#app.focus .bar:hover,#app.focus .bar:focus-within{opacity:1}
+#app.focus details.summary,#app.focus .sheet-tools{display:none}
+
+/* before a store is chosen, the binder has nothing to show */
+#app.nostore aside{display:none}
+#app.nostore{grid-template-columns:minmax(0,1fr)}
+#app.nostore .bar .stat,#app.nostore .bar .save,#app.nostore #focusBtn,#app.nostore #menuBtn{display:none}
+
+/* phone */
+.scrim{display:none}
+@media (max-width:820px){
+  #app{grid-template-columns:minmax(0,1fr)}
+  aside{position:fixed;top:0;bottom:0;left:0;width:min(86vw,320px);z-index:30;transform:translateX(-102%);transition:transform .22s;
+    padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:max(20px,env(safe-area-inset-bottom,0px))}
+  #app.drawer aside{transform:none}
+  #app.drawer .scrim{display:block;position:fixed;inset:0;z-index:25;background:rgba(0,0,0,.5)}
+  #menuBtn{display:inline-block}
+  .title-in{font-size:1.6rem}
+  .sheet{padding-block:28px 75vh}
+  .stat.wide{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app" class="nostore">
+  <aside id="side" aria-label="Book">
+    <div class="books"><select id="bookSel" aria-label="Switch book"></select><button class="add" id="addBook" title="Start a new book">+ Book</button></div>
+    <div class="goal">
+      <input id="bookTitle" aria-label="Book title" placeholder="Book title">
+      <div class="nums"><span class="total" id="gTotal">0</span><span class="of">of <input id="goalIn" inputmode="numeric" aria-label="Word goal" value="50000"> words</span></div>
+      <button class="goalbtn" id="goalBtn" aria-expanded="false" aria-controls="chartP" title="Show words per day">
+        <span class="track" aria-hidden="true"><span class="fill" id="gFill"></span><span class="pace" id="gPace" hidden></span></span>
+        <span class="sub"><span id="gSub">Goal for this book</span><span class="chev" id="gChev">Daily chart ▾</span></span>
+      </button>
+      <div class="chartp" id="chartP" hidden>
+        <div class="chart-head"><span class="label" id="cMonth">This month</span><span class="readout"><b id="cTotal">0</b> / <span id="cGoal">50,000</span></span></div>
+        <div class="chartwrap"><div class="chart" id="chart"></div><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line class="par" id="cPar" x1="0" y1="100" x2="100" y2="0" vector-effect="non-scaling-stroke"></line></svg></div>
+        <div class="chart-x"><span>1</span><span id="cMid">15</span><span id="cEnd">30</span></div>
+        <div class="readout" id="cRead"></div>
+        <div class="cstats"><div><span>Best day</span><b id="cBest">0</b></div><div><span>Daily average</span><b id="cAvg">0</b></div><div><span>Per day to finish</span><b id="cNeed">0</b></div></div>
+        <div class="legend">Each bar is your running total for the month. The dashed line is the pace that hits your goal by month's end. Tap a bar to see that day.</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="label">Chapters</span><button class="add" id="addCh">+ Chapter</button></div>
+      <ol class="list" id="chList"></ol>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="label">Writer's bible</span><button class="add" id="addBible">+ Entry</button></div>
+      <ul class="list" id="bibleList"></ul>
+    </div>
+
+    <details class="trash" id="trashBox" hidden>
+      <summary id="trashSum">Trash</summary>
+      <ul class="list" id="trashList"></ul>
+    </details>
+
+    <div class="leftoff">
+      <label class="label" for="leftOff">Where I left off</label>
+      <textarea id="leftOff" placeholder="Next time: what was about to happen, what to fix, what you were stuck on."></textarea>
+      <div class="store-note" id="storeNote" hidden></div>
+    </div>
+
+    <div class="sec" id="expSec">
+      <span class="label">Export</span>
+      <label class="field">Author <input id="authorIn" placeholder="Your name, for Word and epub" aria-label="Author name"></label>
+      <div class="exp">
+        <button class="add" id="expBook">Book .txt</button>
+        <button class="add" id="expChap">Chapter .txt</button>
+        <button class="add" id="expDocx">Word .docx</button>
+        <button class="add" id="expEpub">eBook .epub</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <span class="label">Desk</span>
+      <div class="where" id="whereLine"></div>
+      <div class="exp">
+        <button class="add" id="reloadBtn" hidden title="Pick up changes your AI agent made to the files">Reload from folder</button>
+        <button class="add" id="dlAll" title="Every book, as a zip of plain files">Download everything</button>
+        <button class="add" id="changeStore" hidden>Change where I save</button>
+        <button class="add" id="aboutBtn">How saving works</button>
+      </div>
+      <label class="field">Theme
+        <select id="themeSel" aria-label="Theme"><option value="dark">Dark</option><option value="light">Light</option><option value="sepia">Sepia</option><option value="moss">Moss</option></select>
+      </label>
+      <label class="field" id="voiceRow" hidden>Voice
+        <select id="voiceSel" aria-label="Read aloud voice"></select>
+      </label>
+      <div class="where" id="voiceNote" hidden>Online voice: the words being read are sent over the internet to the voice's company (usually Microsoft or Google) to be spoken. Pick one under "On this computer" to keep everything on your machine.</div>
+    </div>
+
+    <footer class="credit">Moss Writing Desk · made by <a href="https://lelula.itch.io" target="_blank" rel="noopener">LelulaGames</a> · <a href="https://lelula.itch.io" target="_blank" rel="noopener">♥ support</a></footer>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main id="main">
+    <div class="bar">
+      <button class="btn" id="menuBtn">Binder</button>
+      <span class="crumb" id="crumb">Opening your desk…</span>
+      <span class="stat"><b id="sToday">0</b> today</span>
+      <span class="stat wide"><b id="sChap">0</b> this chapter</span>
+      <span class="save" id="saveState" data-s="saved">Saved</span>
+      <button class="btn" id="askBtn" aria-expanded="false" aria-controls="askP" title="Ask Claude about this chapter" hidden>Claude</button>
+      <button class="btn" id="focusBtn" title="Hide everything but the page (Esc to leave)">Focus</button>
+    </div>
+
+    <section class="sheet" id="chapterView" hidden>
+      <input class="title-in" id="chTitle" placeholder="Chapter title" aria-label="Chapter title">
+      <div class="sheet-tools">
+        <button class="tbtn" id="readBtn" hidden title="Your browser reads the chapter aloud, starting at your cursor">Read aloud</button>
+        <button class="tbtn" id="trashCh">Move chapter to trash</button>
+      </div>
+      <details class="summary" id="sumBox">
+        <summary>Chapter summary <span class="hint">· a few lines on what happens, for keeping track</span></summary>
+        <textarea id="chSummary" placeholder="Who's here, what happens, what changes by the end."></textarea>
+      </details>
+      <textarea id="editor" placeholder="Start writing…" aria-label="Chapter text" spellcheck="true"></textarea>
+    </section>
+
+    <section class="sheet" id="bibleView" hidden>
+      <input class="title-in" id="bName" placeholder="Name" aria-label="Entry name">
+      <div class="bible-kind">
+        <label for="bKind">Kind</label>
+        <select id="bKind">
+          <option>Character</option><option>Place</option><option>Thing</option><option>Group</option><option>Other</option>
+        </select>
+        <button class="tbtn" id="trashBible">Move to trash</button>
+      </div>
+      <p class="bible-help">Only the details that matter: spelling, eye colour, age, who they're tied to, things that must not change.</p>
+      <textarea id="bDetails" placeholder="Eyes: grey-green. Spelled Katherine, goes by Kit…" aria-label="Details"></textarea>
+    </section>
+
+    <section class="welcome" id="emptyView" hidden>
+      <h1>A clean desk</h1>
+      <p>Chapters go down the left. Everything saves as you type, and each chapter has a short summary so the story stays easy to keep track of.</p>
+      <div><button class="btn primary" id="startBtn">Start Chapter 1</button></div>
+    </section>
+
+    <section class="welcome" id="loadView">
+      <h1>Opening your desk…</h1>
+      <p class="warnline" id="loadWarn" hidden>Your saved writing hasn't loaded yet. Check your connection; this page keeps trying.</p>
+    </section>
+
+    <section class="welcome" id="setupView" hidden>
+      <h1>Where should your writing live?</h1>
+      <p>Pick one to start. You can change it later, and "Download everything" always gives you a copy of every book as plain files.</p>
+      <div class="choices">
+        <button class="choice" id="pickFolder">
+          <span class="tag">Best with an AI agent</span>
+          <b>A folder on this computer</b>
+          <span>Every chapter is a plain text file you own. Your AI agent (Claude, Gemini, ChatGPT…) can read and write the same folder. Put the folder inside Google Drive, Dropbox or OneDrive and it follows you to other computers.</span>
+          <em id="folderNo" hidden>This needs Chrome or Edge on a computer. Phones and other browsers can't open folders yet.</em>
+        </button>
+        <button class="choice" id="pickBrowser">
+          <b>Just this browser</b>
+          <span>For trying it out. Your writing stays inside this one browser on this one device, and AI agents can't reach it. Clearing your browser data clears it too.</span>
+        </button>
+      </div>
+      <p class="small"><b>Using Claude?</b> Open this page as a Claude artifact instead, and your writing saves to your Claude account and follows you to any device, phone included. The Claude button then helps with summaries, name checks and bible entries.</p>
+      <p class="small">This page is just the tool. Your writing stays with you. It sends nothing anywhere; the only AI that sees your book is the one you choose to show it to, under that company's rules.</p>
+      <p class="warnline" id="setupWarn" hidden></p>
+      <p id="setupBack" hidden><button class="btn" id="setupCancel">Back to my desk</button></p>
+    </section>
+
+    <section class="welcome" id="reconnectView" hidden>
+      <h1>Welcome back</h1>
+      <p>Your browser asks again before a page can open a folder. One click and your desk is back.</p>
+      <div><button class="btn primary" id="reconnectBtn">Open my desk folder</button></div>
+      <p class="small" id="reconnectName"></p>
+      <p class="small"><button class="tbtn" id="reconnectOther">Choose a different folder</button> <button class="tbtn" id="reconnectBrowser">Use this browser instead</button></p>
+      <p class="warnline" id="reconnectWarn" hidden></p>
+    </section>
+  </main>
+
+  <section class="askp" id="askP" aria-label="Ask Claude" hidden>
+    <div class="askp-head"><span class="label">Ask Claude</span><button class="tbtn" id="askClose">Close</button></div>
+    <div class="askp-acts">
+      <button class="add" data-act="summary">Summarize chapter</button>
+      <button class="add" data-act="names">Check names</button>
+      <button class="add" data-act="bible">Suggest bible entries</button>
+      <button class="add" data-act="stuck">I'm stuck</button>
+    </div>
+    <div class="askp-out" id="askOut"></div>
+    <div class="askp-row" id="askRow"></div>
+    <p class="askp-note">Claude only sees this book: the open chapter, your bible and the other chapter summaries. Nothing changes until you tap Add or Use.</p>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+(function(){
+"use strict";
+/* =====================================================================
+   Part 1: plain-file format, zip, Word, epub, and the three save stores
+   ===================================================================== */
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const wc=t=>{const m=(t||'').match(/\S+/g);return m?m.length:0};
+const fmt=n=>Number(n||0).toLocaleString('en-US');
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const clone=o=>JSON.parse(JSON.stringify(o));
+function fileSafe(s){return (String(s||'').replace(/[\u0000-\u001f\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').replace(/^[.\s]+|[.\s]+$/g,'').trim()||'untitled').slice(0,80)}
+const randId=p=>p+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+
+/* ---------- the plain-file layout of one book (see AGENTS.md) ----------
+   <Book folder>/book.json             title, author, goal
+   <Book folder>/where-i-left-off.md   the note in the binder
+   <Book folder>/summaries.md          "## <chapter file name>" then the summary
+   <Book folder>/bible.md              "## <Name>", "Kind: Character", then details
+   <Book folder>/chapters/01 Title.md  "# Title", blank line, then the text
+   <Book folder>/trash/...             same layout for trashed things
+   <Book folder>/days.json             words-per-day tracking (the app keeps this) */
+const SUM_NOTE='<!-- One section per chapter, in book order. Each "## " heading must match the chapter\'s file name in chapters/ (without .md). Keep each summary to a few plain sentences. -->';
+const BIBLE_NOTE='<!-- One section per entry. "## Name", then a "Kind:" line (Character, Place, Thing, Group or Other), then one detail per line. Only details that matter: spellings, eye colour, ages, ties, things that must not change. -->';
+const KINDS=['Character','Place','Thing','Group','Other'];
+function chapterStems(list){
+  const w=list.length>=100?3:2,used=new Set();
+  return list.map(([id,ch],i)=>{
+    const base=String(i+1).padStart(w,'0')+' '+fileSafe(ch.title||'Untitled chapter');
+    let s=base,n=2;while(used.has(s.toLowerCase()))s=base+' ('+(n++)+')';used.add(s.toLowerCase());return [id,s];
+  });
+}
+const oneLine=s=>String(s||'').replace(/\s*\n\s*/g,' ').trim();
+function chapterFile(ch){return '# '+(oneLine(ch.title)||'Untitled chapter')+'\n\n'+String(ch.text||'').replace(/\s+$/,'')+'\n'}
+function sectionsText(head,note,items){return [head,'',note,'',...items.map(([h,b])=>'## '+h+'\n'+String(b||'').trim()+'\n')].join('\n').replace(/\n+$/,'')+'\n'}
+function bibleBody(b){return 'Kind: '+(KINDS.includes(b.kind)?b.kind:'Other')+(String(b.details||'').trim()?'\n'+String(b.details).trim():'')}
+/* D = {chapters:{id:body}, bible:{id:body}, meta:{bookId:body}, days:{'bookId~YYYY-MM-DD':{start,end}}} */
+function serializeBook(D,b){
+  const files=[],idPath={},m=D.meta[b]||{};
+  files.push({path:'book.json',text:JSON.stringify({title:m.title||'Untitled book',author:m.author||'',goal:Number(m.goal)||50000,created:m.created||Date.now(),app:'Moss Writing Desk',format:1},null,2)+'\n'});
+  files.push({path:'where-i-left-off.md',text:String(m.leftOff||'')});
+  const all=Object.entries(D.chapters).filter(([,x])=>x&&x.book===b).sort((a,c)=>(a[1].order||0)-(c[1].order||0));
+  for(const [trashed,dir] of [[false,''],[true,'trash/']]){
+    const list=all.filter(([,x])=>!!x.trashed===trashed),stems=chapterStems(list),sums=[];
+    stems.forEach(([id,stem])=>{const ch=D.chapters[id],p=dir+'chapters/'+stem+'.md';idPath[id]=p;files.push({path:p,text:chapterFile(ch)});sums.push([stem,ch.summary])});
+    if(!trashed||list.length)files.push({path:dir+'summaries.md',text:sectionsText('# Chapter summaries'+(trashed?' (trash)':''),SUM_NOTE,sums)});
+    const bib=Object.entries(D.bible).filter(([,x])=>x&&x.book===b&&!!x.trashed===trashed&&String(x.name||'').trim())
+      .sort((a,c)=>(KINDS.indexOf(a[1].kind)-KINDS.indexOf(c[1].kind))||String(a[1].name).localeCompare(String(c[1].name)));
+    if(!trashed||bib.length)files.push({path:dir+'bible.md',text:sectionsText("# Writer's bible"+(trashed?' (trash)':''),BIBLE_NOTE,bib.map(([,x])=>[oneLine(x.name),bibleBody(x)]))});
+  }
+  const days={};for(const k in D.days){const i=k.indexOf('~');if(i>0&&k.slice(0,i)===b)days[k.slice(i+1)]=D.days[k]}
+  files.push({path:'days.json',text:JSON.stringify(days,null,1)+'\n'});
+  return {files,idPath};
+}
+/* "## heading" sections; anything above the first heading (title, notes) is ignored */
+function parseSections(md){
+  const out=[];let cur=null;
+  String(md||'').replace(/\r\n?/g,'\n').replace(/<!--[\s\S]*?-->/g,'').split('\n').forEach(line=>{
+    const m=/^##\s+(.*?)\s*$/.exec(line);
+    if(m){cur={head:m[1],lines:[]};out.push(cur)}else if(cur)cur.lines.push(line);
+  });
+  return out.map(s=>({head:s.head,body:s.lines.join('\n').trim()}));
+}
+function parseChapter(name,text){
+  const stem=name.replace(/\.(md|txt|markdown)$/i,'');
+  const lines=String(text||'').replace(/\r\n?/g,'\n').split('\n');
+  let title=null;
+  const first=lines.findIndex(l=>l.trim()!=='');
+  if(first>=0&&/^#\s+/.test(lines[first])){title=lines[first].replace(/^#\s+/,'').trim();lines.splice(0,first+1)}
+  const num=/^(\d+)/.exec(stem);
+  if(title==null)title=stem.replace(/^\d+\s*[-_.]?\s*/,'')||stem;
+  return {stem,title,order:num?parseInt(num[1],10):null,text:lines.join('\n').replace(/^\n+/,'').replace(/\s+$/,'')};
+}
+function parseBibleBody(body){
+  const lines=String(body||'').split('\n');let kind='Other';
+  const i=lines.findIndex(l=>l.trim()!=='');
+  if(i>=0){const m=/^\s*\**\s*kind\s*\**\s*:\s*\**\s*([A-Za-z]+)/i.exec(lines[i]);if(m){const k=m[1][0].toUpperCase()+m[1].slice(1).toLowerCase();kind=KINDS.includes(k)?k:'Other';lines.splice(i,1)}}
+  return {kind,details:lines.join('\n').trim()};
+}
+
+/* ---------- zip (stored, no compression; good enough for text) ---------- */
+const enc=new TextEncoder();
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function makeZip(files){
+  const parts=[],cen=[];let off=0;const now=new Date();
+  const dt=((now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1))&0xFFFF;
+  const dd=(((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate())&0xFFFF;
+  for(const f of files){
+    const name=enc.encode(f.name),data=typeof f.data==='string'?enc.encode(f.data):f.data,crc=crc32(data);
+    const flag=/^[\x20-\x7e]*$/.test(f.name)?0:0x0800;
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,flag,true);h.setUint16(8,0,true);h.setUint16(10,dt,true);h.setUint16(12,dd,true);
+    h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),name,data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,flag,true);c.setUint16(10,0,true);c.setUint16(12,dt,true);c.setUint16(14,dd,true);
+    c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,off,true);
+    cen.push(new Uint8Array(c.buffer),name);
+    off+=30+name.length+data.length;
+  }
+  const size=cen.reduce((a,u)=>a+u.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,size,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:'application/zip'});
+}
+
+/* ---------- Word and epub ---------- */
+const xesc=s=>String(s==null?'':s).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const isBreak=l=>/^\s*([*#~-]\s*){3,}\s*$/.test(l);
+const paras=t=>String(t||'').replace(/\r\n?/g,'\n').split('\n').map(l=>l.trim()).filter(Boolean);
+function docxBlob(title,author,chs){
+  const W='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+  const P=(text,style,center)=>'<w:p>'+((style||center)?'<w:pPr>'+(style?'<w:pStyle w:val="'+style+'"/>':'')+(center?'<w:jc w:val="center"/><w:ind w:firstLine="0"/>':'')+'</w:pPr>':'')+'<w:r><w:t xml:space="preserve">'+xesc(text)+'</w:t></w:r></w:p>';
+  let body=P(title,'Title');if(author)body+=P(author,'Subtitle');
+  chs.forEach(ch=>{body+=P(oneLine(ch.title)||'Untitled chapter','Heading1');paras(ch.text).forEach(l=>{body+=isBreak(l)?P('* * *',null,true):P(l)})});
+  const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document '+W+'><w:body>'+body+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles '+W+'><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Georgia" w:eastAsia="Georgia"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="360" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>'
+    +'<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:pPr><w:ind w:firstLine="432"/></w:pPr></w:style>'
+    +'<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:jc w:val="center"/><w:spacing w:before="2880" w:after="240"/><w:ind w:firstLine="0"/></w:pPr><w:rPr><w:sz w:val="56"/><w:szCs w:val="56"/></w:rPr></w:style>'
+    +'<w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:rPr><w:i/><w:sz w:val="28"/><w:szCs w:val="28"/></w:rPr></w:style>'
+    +'<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:pageBreakBefore/><w:jc w:val="center"/><w:spacing w:before="1440" w:after="480"/><w:ind w:firstLine="0"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/></w:rPr></w:style></w:styles>';
+  return makeZip([
+    {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>'},
+    {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'},
+    {name:'word/_rels/document.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:'word/document.xml',data:doc},
+    {name:'word/styles.xml',data:styles}
+  ]);
+}
+function epubBlob(title,author,chs){
+  const uid='urn:uuid:'+((crypto&&crypto.randomUUID)?crypto.randomUUID():randId('x'));
+  const mod=new Date().toISOString().replace(/\.\d+Z$/,'Z');
+  const page=(t,body)=>'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en" xml:lang="en"><head><meta charset="UTF-8"/><title>'+xesc(t)+'</title><link rel="stylesheet" type="text/css" href="style.css"/></head><body>'+body+'</body></html>';
+  const files=[{name:'mimetype',data:'application/epub+zip'},
+    {name:'META-INF/container.xml',data:'<?xml version="1.0" encoding="UTF-8"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'},
+    {name:'OEBPS/style.css',data:'body{font-family:serif;line-height:1.5;margin:0 5%}h1{text-align:center;margin:3em 0 1.5em;font-size:1.5em}p{margin:0;text-indent:1.5em}h1+p,p.first{text-indent:0}p.scene{text-align:center;text-indent:0;margin:1em 0}.title{text-align:center;margin-top:30%}.title h1{font-size:2em;margin:0}.title p{text-indent:0;margin-top:1em;font-style:italic}'},
+    {name:'OEBPS/title.xhtml',data:page(title,'<section class="title" epub:type="titlepage"><h1>'+xesc(title)+'</h1>'+(author?'<p>'+xesc(author)+'</p>':'')+'</section>')}];
+  const man=[],spine=['<itemref idref="title"/>'],nav=[],ncx=[];
+  chs.forEach((ch,i)=>{
+    const id='ch'+String(i+1).padStart(3,'0'),t=oneLine(ch.title)||'Untitled chapter';let first=true;
+    const body='<section epub:type="chapter"><h1>'+xesc(t)+'</h1>'+paras(ch.text).map(l=>{if(isBreak(l)){first=true;return '<p class="scene">* * *</p>'}const c=first?' class="first"':'';first=false;return '<p'+c+'>'+xesc(l)+'</p>'}).join('')+'</section>';
+    files.push({name:'OEBPS/'+id+'.xhtml',data:page(t,body)});
+    man.push('<item id="'+id+'" href="'+id+'.xhtml" media-type="application/xhtml+xml"/>');spine.push('<itemref idref="'+id+'"/>');
+    nav.push('<li><a href="'+id+'.xhtml">'+xesc(t)+'</a></li>');
+    ncx.push('<navPoint id="n'+id+'" playOrder="'+(i+1)+'"><navLabel><text>'+xesc(t)+'</text></navLabel><content src="'+id+'.xhtml"/></navPoint>');
+  });
+  files.push({name:'OEBPS/nav.xhtml',data:page('Contents','<nav epub:type="toc" id="toc"><h1>Contents</h1><ol>'+nav.join('')+'</ol></nav>')});
+  files.push({name:'OEBPS/toc.ncx',data:'<?xml version="1.0" encoding="UTF-8"?><ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta name="dtb:uid" content="'+uid+'"/></head><docTitle><text>'+xesc(title)+'</text></docTitle><navMap>'+ncx.join('')+'</navMap></ncx>'});
+  files.push({name:'OEBPS/content.opf',data:'<?xml version="1.0" encoding="UTF-8"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid" xml:lang="en"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="bookid">'+uid+'</dc:identifier><dc:title>'+xesc(title)+'</dc:title>'+(author?'<dc:creator>'+xesc(author)+'</dc:creator>':'')+'<dc:language>en</dc:language><meta property="dcterms:modified">'+mod+'</meta></metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/><item id="css" href="style.css" media-type="text/css"/><item id="title" href="title.xhtml" media-type="application/xhtml+xml"/>'+man.join('')+'</manifest><spine toc="ncx">'+spine.join('')+'</spine></package>'});
+  return makeZip(files);
+}
+
+/* ---------- a store in memory with the same calls the desk uses ---------- */
+function makeMemStore(initial,onChange){
+  const data={chapters:{},bible:{},meta:{},days:{},...(initial||{})},subs={};
+  const snap=(id,b)=>({id,exists:!!b,data:()=>b?clone(b):undefined,metadata:{fromCache:false,hasPendingWrites:false}});
+  /* tell listeners on the next tick, like a real database would, so a save never yanks data out from under the code that made it */
+  const due={};
+  const emitNow=c=>{const docs=Object.keys(data[c]||{}).map(id=>snap(id,data[c][id]));(subs[c]||[]).forEach(f=>f({docs,size:docs.length,empty:!docs.length,metadata:{fromCache:false,hasPendingWrites:false}}))};
+  const emit=c=>{if(due[c])return;due[c]=setTimeout(()=>{due[c]=0;emitNow(c)})};
+  const changed=(c,id,body)=>onChange&&onChange(c,id,body);
+  return {data,emit,emitAll(){['meta','chapters','bible','days'].forEach(emit)},
+    collection(c){return{
+      onSnapshot(fn){(subs[c]=subs[c]||[]).push(fn);setTimeout(()=>emit(c));return()=>{}},
+      doc(id){id=id||randId(c[0]);return{id,
+        async get(){return snap(id,data[c]&&data[c][id])},
+        async set(b){(data[c]=data[c]||{})[id]=clone(b);changed(c,id,data[c][id]);emit(c)},
+        async update(b){if(!(data[c]&&data[c][id]))throw{code:'invalid_argument'};Object.assign(data[c][id],clone(b));changed(c,id,data[c][id]);emit(c)},
+        async delete(){const old=data[c]&&data[c][id];if(data[c])delete data[c][id];changed(c,id,old);emit(c)}}}}}};
+}
+
+/* browser storage: one JSON blob in localStorage */
+const LOCAL_KEY='moss-writing-desk-v1';
+function readLocal(){try{return JSON.parse(ls.get(LOCAL_KEY)||'null')}catch(e){return null}}
+function makeLocalStore(){
+  let t=null;
+  const s=makeMemStore(readLocal()||{},()=>{clearTimeout(t);t=setTimeout(save,150)});
+  function save(){clearTimeout(t);try{localStorage.setItem(LOCAL_KEY,JSON.stringify(s.data))}catch(e){s.lastError={code:'quota_exceeded'}}}
+  s.kind='browser';
+  s.sync=async()=>{save();if(s.lastError){const e=s.lastError;s.lastError=null;throw e}};
+  return s;
+}
+
+/* a folder of plain files, through the browser's File System Access API (Chrome/Edge) */
+const canFolder=typeof window.showDirectoryPicker==='function';
+async function subDir(dir,path,create){let d=dir;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p,{create:!!create});return d}
+function splitPath(p){const a=p.split('/');const name=a.pop();return [a.join('/'),name]}
+async function writeText(dir,path,text){const [d,n]=splitPath(path);const fh=await (await subDir(dir,d,true)).getFileHandle(n,{create:true});const w=await fh.createWritable();await w.write(text);await w.close();const f=await fh.getFile();return f.lastModified+':'+f.size}
+async function writeBlob(dir,path,blob){const [d,n]=splitPath(path);const fh=await (await subDir(dir,d,true)).getFileHandle(n,{create:true});const w=await fh.createWritable();await w.write(blob);await w.close()}
+async function readText(dir,path){try{const [d,n]=splitPath(path);const f=await (await (await subDir(dir,d,false)).getFileHandle(n)).getFile();return {text:await f.text(),stamp:f.lastModified+':'+f.size}}catch(e){return null}}
+async function removeFile(dir,path){try{const [d,n]=splitPath(path);await (await subDir(dir,d,false)).removeEntry(n)}catch(e){}}
+async function entries(dir,path){const out=[];try{const d=path?await subDir(dir,path,false):dir;for await (const [name,h] of d.entries())out.push({name,kind:h.kind,h})}catch(e){}return out}
+const isChapterFile=n=>/\.(md|txt|markdown)$/i.test(n)&&!n.startsWith('.');
+const skipDir=n=>n.startsWith('.')||n.startsWith('_');
+
+function makeFolderStore(root){
+  const ids=new Map();          /* "book/path" -> id, so ids stay put across reloads */
+  const written=new Map();      /* "book/path" -> last text we wrote or read */
+  let stamps=new Map();         /* "book/path" -> lastModified:size */
+  const owned={};               /* book -> Set of chapter/summary/bible paths we manage */
+  const dirty=new Set(),backedUp={};
+  let dirNames=new Set(),timer=null,writing=null,lastErr=null;
+  const bookOf=(c,id,body)=>c==='meta'?id:c==='days'?String(id).split('~')[0]:(body&&body.book);
+  const s=makeMemStore({},(c,id,body)=>{const b=bookOf(c,id,body);if(b){dirty.add(b);clearTimeout(timer);timer=setTimeout(()=>s.sync().catch(()=>{}),600)}});
+  s.kind='folder';s.root=root;s.name=root.name;
+  const idFor=(key,p)=>{if(!ids.has(key))ids.set(key,randId(p));return ids.get(key)};
+
+  async function loadBook(name,bdir,D,st){
+    const rd=async p=>{const r=await readText(bdir,p);if(r){written.set(name+'/'+p,r.text);st.set(name+'/'+p,r.stamp)}return r&&r.text};
+    let info={};try{info=JSON.parse(await rd('book.json')||'{}')||{}}catch(e){info={}}
+    D.meta[name]={title:String(info.title||name),author:String(info.author||''),goal:Number(info.goal)||50000,created:Number(info.created)||0,leftOff:(await rd('where-i-left-off.md'))||''};
+    const own=owned[name]=new Set();
+    for(const [trashed,dir] of [[false,''],[true,'trash/']]){
+      const sums={};
+      const sm=await rd(dir+'summaries.md');if(sm!=null){own.add(dir+'summaries.md');parseSections(sm).forEach(x=>{sums[x.head.toLowerCase()]=x.body})}
+      const files=(await entries(bdir,dir+'chapters')).filter(e=>e.kind==='file'&&isChapterFile(e.name)).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+      let extra=10000;
+      for(const f of files){
+        const p=dir+'chapters/'+f.name,text=await rd(p);if(text==null)continue;own.add(p);
+        const ch=parseChapter(f.name,text);
+        D.chapters[idFor(name+'/'+p,'c')]={title:ch.title,order:ch.order!=null?ch.order:extra++,text:ch.text,words:wc(ch.text),
+          summary:sums[ch.stem.toLowerCase()]!=null?sums[ch.stem.toLowerCase()]:(sums[ch.title.toLowerCase()]||''),trashed,book:name,updatedAt:0};
+      }
+      const bm=await rd(dir+'bible.md');
+      if(bm!=null){own.add(dir+'bible.md');const seen={};parseSections(bm).forEach(x=>{
+        const k=x.head.toLowerCase();seen[k]=(seen[k]||0)+1;const bb=parseBibleBody(x.body);
+        D.bible[idFor(name+'/'+dir+'bible/'+k+'#'+seen[k],'b')]={name:x.head,kind:bb.kind,details:bb.details,trashed,book:name,updatedAt:0};
+      })}
+    }
+    try{const days=JSON.parse(await rd('days.json')||'{}')||{};for(const k in days)if(days[k]&&typeof days[k].start==='number')D.days[name+'~'+k]=days[k]}catch(e){}
+  }
+  s.load=async function(){
+    const D={chapters:{},bible:{},meta:{},days:{}},st=new Map(),names=new Set();
+    for(const e of await entries(root,'')){
+      if(e.kind!=='directory'||skipDir(e.name))continue;names.add(e.name.toLowerCase());
+      const kids=await entries(e.h,'');
+      if(kids.some(k=>(k.kind==='file'&&k.name==='book.json')||(k.kind==='directory'&&k.name==='chapters')))await loadBook(e.name,e.h,D,st);
+    }
+    for(const c in D){s.data[c]=D[c]}stamps=st;dirNames=names;
+    return D;
+  };
+  s.rootIsBook=async()=>!!(await readText(root,'book.json'));
+  s.newBookId=title=>{let base=fileSafe(title||'New book'),id=base,n=2;while(dirNames.has(id.toLowerCase())||s.data.meta[id])id=base+' '+(n++);dirNames.add(id.toLowerCase());return id};
+  async function backup(b,files){
+    const today=ymd(new Date());if(backedUp[b]===today)return;backedUp[b]=today;
+    try{
+      await writeBlob(root,'_backups/'+b+'/'+b+' '+today+'.zip',makeZip(files.map(f=>({name:b+'/'+f.path,data:f.text}))));
+      const old=(await entries(root,'_backups/'+b)).filter(e=>e.kind==='file'&&/\.zip$/i.test(e.name)).map(e=>e.name).sort();
+      for(const n of old.slice(0,Math.max(0,old.length-14)))await removeFile(root,'_backups/'+b+'/'+n);
+    }catch(e){}
+  }
+  async function writeBook(b){
+    if(!s.data.meta[b])return;
+    const bdir=await root.getDirectoryHandle(b,{create:true});dirNames.add(b.toLowerCase());
+    const {files,idPath}=serializeBook(s.data,b);
+    await backup(b,files);
+    const keep=new Set(files.map(f=>f.path));
+    for(const f of files){const k=b+'/'+f.path;if(written.get(k)!==f.text){stamps.set(k,await writeText(bdir,f.path,f.text));written.set(k,f.text)}}
+    const own=owned[b]||(owned[b]=new Set());
+    for(const p of own)if(!keep.has(p)){await removeFile(bdir,p);written.delete(b+'/'+p);stamps.delete(b+'/'+p)}
+    owned[b]=new Set([...keep].filter(p=>/(^|\/)(chapters\/|summaries\.md$|bible\.md$)/.test(p)));
+    for(const [id,p] of Object.entries(idPath))ids.set(b+'/'+p,id);
+  }
+  s.sync=async function(){
+    clearTimeout(timer);
+    while(writing)await writing;
+    if(!dirty.size){if(lastErr){const e=lastErr;lastErr=null;throw e}return}
+    const books=[...dirty];dirty.clear();
+    writing=(async()=>{for(const b of books){try{await writeBook(b)}catch(e){dirty.add(b);lastErr=e&&e.name==='NotAllowedError'?{code:'folder_permission'}:{code:'folder_write'}}}})();
+    try{await writing}finally{writing=null}
+    if(lastErr){const e=lastErr;lastErr=null;timer=setTimeout(()=>s.sync().catch(()=>{}),5000);throw e}
+  };
+  s.busy=()=>!!(dirty.size||writing);
+  /* did anything change on disk since we last read or wrote it? (an AI agent editing the files) */
+  s.changedOnDisk=async function(){
+    const seen=new Map();
+    for(const e of await entries(root,'')){
+      if(e.kind!=='directory'||skipDir(e.name))continue;
+      const stamp=async(p,fh)=>{try{const f=await fh.getFile();seen.set(e.name+'/'+p,f.lastModified+':'+f.size)}catch(_){}};
+      for(const k of await entries(e.h,''))if(k.kind==='file'&&/^(book\.json|where-i-left-off\.md|summaries\.md|bible\.md|days\.json)$/.test(k.name))await stamp(k.name,k.h);
+      for(const dir of ['','trash/']){
+        for(const k of await entries(e.h,dir+'chapters'))if(k.kind==='file'&&isChapterFile(k.name))await stamp(dir+'chapters/'+k.name,k.h);
+        if(dir)for(const k of await entries(e.h,'trash'))if(k.kind==='file'&&/^(summaries|bible)\.md$/.test(k.name))await stamp('trash/'+k.name,k.h);
+      }
+    }
+    if(seen.size!==stamps.size)return true;
+    for(const [k,v] of seen)if(stamps.get(k)!==v)return true;
+    return false;
+  };
+  s.reload=async function(){await s.load();s.emitAll()};
+  /* first time in a folder: bring along books already kept in this browser */
+  s.importFrom=function(D){
+    const map={};
+    Object.entries(D.meta||{}).forEach(([id,m])=>{const nb=s.newBookId((m&&m.title)||'Untitled book');map[id]=nb;s.data.meta[nb]={...clone(m),created:(m&&m.created)||Date.now()};dirty.add(nb)});
+    for(const c of ['chapters','bible'])Object.values(D[c]||{}).forEach(x=>{if(x&&map[x.book])s.data[c][randId(c[0])]={...clone(x),book:map[x.book]}});
+    Object.entries(D.days||{}).forEach(([k,v])=>{const i=k.indexOf('~');if(i>0&&map[k.slice(0,i)])s.data.days[map[k.slice(0,i)]+'~'+k.slice(i+1)]=clone(v)});
+    return Object.keys(map).length;
+  };
+  return s;
+}
+
+/* remember the chosen folder between visits (browsers keep folder handles in IndexedDB) */
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('moss-writing-desk',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function idbGet(k){try{const d=await idb();return await new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}}
+async function idbSet(k,v){try{const d=await idb();await new Promise(r=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=r;t.onerror=r})}catch(e){}}
+/* =====================================================================
+   Part 2: the desk (binder, editor, goal chart, books, export, Claude)
+   ===================================================================== */
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const DEFAULT_META={title:'Untitled novel',goal:50000,leftOff:'',author:''};
+const FIELDS={
+  chapters:{title:'#chTitle',summary:'#chSummary',text:'#editor'},
+  bible:{name:'#bName',kind:'#bKind',details:'#bDetails'}
+};
+/* every chapter, bible entry and day carries the id of its book; days are named bookId~YYYY-MM-DD */
+const state={data:{chapters:{},bible:{}},meta:{...DEFAULT_META},cur:null,loaded:false,dayStart:null,dayKey:null,days:{},sel:null,book:'',metas:{},rawDays:{}};
+const inBook=x=>!!x&&x.book===state.book;
+const dayDocId=k=>state.book+'~'+k;
+function deriveDays(){const map={},raw=state.rawDays,pre=state.book+'~';for(const id in raw)if(id.indexOf(pre)===0)map[id.slice(pre.length)]=raw[id];state.days=map}
+const pending={},inflight={};
+let store=null,saving=false,saveTimer=null,inClaude=false,downloads=null,sample=null;
+
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function autosize(t){t.style.height='auto';t.style.height=t.scrollHeight+'px'}
+function setVal(e,v){
+  v=v==null?'':String(v);
+  if(e.value===v)return;
+  const focused=document.activeElement===e,s=e.selectionStart,en=e.selectionEnd;
+  e.value=v;
+  if(focused&&e.setSelectionRange){try{e.setSelectionRange(Math.min(s,v.length),Math.min(en,v.length))}catch(_){}}
+  if(e.tagName==='TEXTAREA')autosize(e);
+}
+function arm(btn,label,fn){
+  if(btn.dataset.armed){fn();return}
+  const orig=btn.textContent;btn.dataset.armed='1';btn.classList.add('armed');btn.textContent=label;
+  setTimeout(()=>{delete btn.dataset.armed;btn.classList.remove('armed');btn.textContent=orig},4000);
+}
+let toastT=null;
+function toast(t,ms){const e=$('#toast');e.textContent=t;e.hidden=!t;clearTimeout(toastT);if(t)toastT=setTimeout(()=>{e.hidden=true},ms||5000)}
+function showStoreNote(t){const n=$('#storeNote');n.textContent=t||'';n.hidden=!t}
+
+/* ---------- themes ---------- */
+function applyTheme(t){if(!['dark','light','sepia','moss'].includes(t))t='dark';document.documentElement.dataset.theme=t;$('#themeSel').value=t;ls.set('mwd-theme',t)}
+$('#themeSel').onchange=e=>applyTheme(e.target.value);
+
+/* ---------- saving ---------- */
+const SAVED={claude:'Saved',folder:'Saved to folder',browser:'Saved in this browser'};
+function setSave(s){const e=$('#saveState');e.dataset.s=s;
+  e.textContent=s==='saved'?(SAVED[store&&store.kind]||'Saved'):({pending:'Saving…',error:'Not saved yet, retrying'}[s]||s)}
+function queueSave(key,fields){
+  pending[key]={...(pending[key]||{}),...fields};
+  setSave('pending');clearTimeout(saveTimer);saveTimer=setTimeout(flush,1200);
+}
+async function flush(){
+  clearTimeout(saveTimer);
+  if(!store)return;
+  if(saving){saveTimer=setTimeout(flush,400);return}
+  const keys=Object.keys(pending);
+  if(!keys.length&&!(store.busy&&store.busy()))return;
+  saving=true;let failed=false,code=null;
+  for(const key of keys){
+    const fields=pending[key];delete pending[key];inflight[key]=fields;
+    const i=key.indexOf('/'),c=key.slice(0,i),id=key.slice(i+1);
+    try{await store.collection(c).doc(id).update(fields)}
+    catch(e){failed=true;code=e&&e.code;pending[key]={...fields,...(pending[key]||{})}}
+    delete inflight[key];
+  }
+  if(!failed){await rollDay();await trackDay()}
+  if(!failed&&store.sync){try{await store.sync()}catch(e){failed=true;code=e&&e.code}}
+  saving=false;
+  if(failed){
+    setSave('error');
+    showStoreNote({quota_exceeded:'Storage is full. Download everything, then empty the trash or move to a folder.',
+      folder_permission:'The browser stopped letting this page write to your folder. Reload the page and open the folder again.',
+      folder_write:'Could not write to your folder. Is it still there, or open in another program? Retrying.'}[code]||'');
+    saveTimer=setTimeout(flush,5000);
+  }
+  else if(Object.keys(pending).length)saveTimer=setTimeout(flush,800);
+  else{setSave('saved');showStoreNote('')}
+}
+
+/* ---------- data in ---------- */
+function mergeSnap(c,snap){
+  const map={};
+  snap.docs.forEach(d=>{const key=c+'/'+d.id;map[d.id]={...d.data(),...(inflight[key]||{}),...(pending[key]||{})}});
+  state.data[c]=map;
+}
+const totalWords=()=>Object.values(state.data.chapters).filter(x=>!x.trashed&&inBook(x)).reduce((a,x)=>a+(x.words!=null?x.words:wc(x.text)),0);
+/* each day keeps {start, end}: the book's word count when the day began and its latest count */
+let lastEnd=null,dayP=null;
+function rollDay(){
+  if(!store||!state.book||state.dayKey===ymd(new Date()))return Promise.resolve();
+  if(!dayP)dayP=doRoll().finally(()=>{dayP=null});
+  return dayP;
+}
+async function doRoll(){
+  const key=ymd(new Date()),prev=state.dayKey;
+  if(prev&&state.dayStart!=null){const t=totalWords();if(t!==lastEnd){try{await store.collection('days').doc(dayDocId(prev)).set({start:state.dayStart,end:t})}catch(e){}}}
+  const ref=store.collection('days').doc(dayDocId(key));
+  try{const s=await ref.get();const d=s.exists?s.data():null;
+    if(d&&typeof d.start==='number'){state.dayStart=d.start;lastEnd=typeof d.end==='number'?d.end:null}
+    else{state.dayStart=totalWords();lastEnd=state.dayStart;await ref.set({start:state.dayStart,end:state.dayStart})}
+  }catch(e){state.dayStart=totalWords();lastEnd=null}
+  state.dayKey=key;
+  renderStats();
+}
+async function trackDay(){
+  if(!state.loaded||!state.dayKey||state.dayStart==null)return;
+  const t=totalWords();if(t===lastEnd)return;
+  try{await store.collection('days').doc(dayDocId(state.dayKey)).set({start:state.dayStart,end:t});lastEnd=t}catch(e){}
+}
+
+/* ---------- rendering ---------- */
+const sortedChapters=()=>Object.entries(state.data.chapters).filter(([,x])=>!x.trashed&&inBook(x)).sort((a,b)=>(a[1].order||0)-(b[1].order||0));
+function renderSide(){
+  const chs=sortedChapters(),ol=$('#chList');ol.textContent='';
+  if(!chs.length)ol.append(el('li','empty-note','No chapters yet'));
+  chs.forEach(([id,ch],i)=>{
+    const li=el('li','row'+(state.cur&&state.cur.id===id?' on':''));
+    const b=el('button','open');b.append(el('span','name',ch.title||'Untitled chapter'),el('span','meta',fmt(ch.words!=null?ch.words:wc(ch.text))));
+    b.onclick=()=>openItem('chapters',id);
+    const up=el('button','mv','▲');up.title='Move up';up.setAttribute('aria-label','Move '+(ch.title||'chapter')+' up');up.disabled=i===0;up.onclick=()=>moveChapter(id,-1);
+    const dn=el('button','mv','▼');dn.title='Move down';dn.setAttribute('aria-label','Move '+(ch.title||'chapter')+' down');dn.disabled=i===chs.length-1;dn.onclick=()=>moveChapter(id,1);
+    li.append(b,up,dn);ol.append(li);
+  });
+  const ents=Object.entries(state.data.bible).filter(([,x])=>!x.trashed&&inBook(x))
+    .sort((a,b)=>(KINDS.indexOf(a[1].kind)-KINDS.indexOf(b[1].kind))||String(a[1].name||'').localeCompare(String(b[1].name||'')));
+  const ul=$('#bibleList');ul.textContent='';
+  if(!ents.length)ul.append(el('li','empty-note','Names, places, spellings'));
+  let lastKind=null;
+  ents.forEach(([id,e])=>{
+    const k=e.kind||'Other';if(k!==lastKind){ul.append(el('li','kind',k+(k==='Other'?'':'s')));lastKind=k}
+    const li=el('li','row'+(state.cur&&state.cur.id===id?' on':''));
+    const b=el('button','open');b.append(el('span','name',e.name||'Unnamed'));b.onclick=()=>openItem('bible',id);
+    li.append(b);ul.append(li);
+  });
+  const trashed=[...Object.entries(state.data.chapters).filter(([,x])=>x.trashed&&inBook(x)).map(([id,x])=>['chapters',id,x.title||'Untitled chapter']),
+                 ...Object.entries(state.data.bible).filter(([,x])=>x.trashed&&inBook(x)).map(([id,x])=>['bible',id,x.name||'Unnamed'])];
+  const box=$('#trashBox'),tl=$('#trashList');box.hidden=!trashed.length;$('#trashSum').textContent='Trash ('+trashed.length+')';tl.textContent='';
+  trashed.forEach(([c,id,name])=>{
+    const li=el('li','row');const n=el('span','open');n.append(el('span','name',name));
+    const r=el('button','tbtn','Restore');r.onclick=()=>{state.data[c][id].trashed=false;queueSave(c+'/'+id,{trashed:false});renderAll()};
+    const d=el('button','tbtn','Delete');d.onclick=()=>arm(d,'Delete forever?',async()=>{delete state.data[c][id];delete pending[c+'/'+id];renderAll();try{await store.collection(c).doc(id).delete();if(store.sync)await store.sync()}catch(e){setSave('error')}});
+    li.append(n,r,d);tl.append(li);
+  });
+}
+function renderStats(){
+  const total=totalWords(),goal=Math.max(1,Number(state.meta.goal)||50000);
+  $('#gTotal').textContent=fmt(total);
+  $('#gFill').style.width=Math.min(100,total/goal*100)+'%';
+  const now=new Date(),pace=$('#gPace'),sub=$('#gSub');sub.textContent='';
+  if(now.getMonth()===10){
+    const day=now.getDate(),target=Math.round(goal*day/30),diff=total-target;
+    pace.hidden=false;pace.style.left=Math.min(100,target/goal*100)+'%';
+    sub.append('Day '+day+' of 30 · ',el('b',null,fmt(Math.abs(diff))),diff>=0?' ahead of pace':' to catch up today');
+  }else{pace.hidden=true;sub.textContent='Goal for this book'}
+  const today=state.dayStart==null?0:Math.max(0,total-state.dayStart);
+  $('#sToday').textContent=fmt(today);
+  const cur=state.cur&&state.cur.c==='chapters'&&state.data.chapters[state.cur.id];
+  $('#sChap').textContent=fmt(cur?(cur.words!=null?cur.words:wc(cur.text)):0);
+  renderChart();
+}
+
+/* ---------- daily chart ---------- */
+function monthSeries(){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth(),n=new Date(y,m+1,0).getDate(),today=now.getDate();
+  const later=Object.keys(state.days).filter(k=>typeof state.days[k].start==='number').sort();
+  const daily=[],cum=[];let run=0;
+  for(let d=1;d<=n;d++){
+    const k=ymd(new Date(y,m,d));let w=null;
+    if(d===today)w=state.dayStart==null?0:totalWords()-state.dayStart;
+    else if(d<today){
+      const doc=state.days[k];
+      if(doc&&typeof doc.start==='number'){
+        let end=typeof doc.end==='number'?doc.end:null;
+        if(end==null){const nx=later.find(x=>x>k);end=nx?state.days[nx].start:doc.start}
+        w=end-doc.start;
+      }else w=0;
+    }
+    daily.push(w);
+    if(w==null)cum.push(null);else{run+=w;cum.push(run)}
+  }
+  return {y,m,n,today,daily,cum,month:now.toLocaleString('en-US',{month:'long'})};
+}
+function renderChart(){
+  const p=$('#chartP');if(!p||p.hidden)return;
+  const s=monthSeries(),goal=Math.max(1,Number(state.meta.goal)||50000);
+  const total=s.cum[s.today-1]||0;
+  const ymax=Math.max(goal,...s.cum.filter(v=>v!=null),1);
+  $('#cMonth').textContent=s.month;$('#cTotal').textContent=fmt(total);$('#cGoal').textContent=fmt(goal);
+  $('#cMid').textContent=String(Math.round(s.n/2));$('#cEnd').textContent=String(s.n);
+  $('#cPar').setAttribute('y2',String(100-goal/ymax*100));
+  let sel=state.sel;if(sel==null||sel<0||sel>=s.today)sel=s.today-1;
+  const ch=$('#chart');ch.style.setProperty('--n',s.n);ch.textContent='';
+  const label=i=>new Date(s.y,s.m,i+1).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  for(let i=0;i<s.n;i++){
+    const fut=i+1>s.today,v=s.cum[i];
+    const col=el('button','col'+(fut?' future':'')+(i+1===s.today?' today':'')+(i===sel?' sel':''));
+    const b=el('span','cb');b.style.height=(v==null?0:Math.max(0,v)/ymax*100)+'%';col.append(b);
+    if(fut){col.disabled=true;col.setAttribute('aria-label',label(i)+', not yet')}
+    else{col.setAttribute('aria-label',label(i)+': '+fmt(s.daily[i])+' words, '+fmt(v)+' total');col.onclick=()=>{state.sel=i;renderChart()}}
+    ch.append(col);
+  }
+  const dw=s.daily[sel]||0,r=$('#cRead');r.textContent='';
+  r.append((sel===s.today-1?'Today':label(sel))+' · ',el('b',null,(dw<0?'−':'')+fmt(Math.abs(dw))),' words · ',el('b',null,fmt(s.cum[sel]||0)),' total');
+  const past=s.daily.slice(0,s.today).map(v=>v||0);
+  $('#cBest').textContent=fmt(Math.max(0,...past));
+  $('#cAvg').textContent=fmt(Math.round(total/s.today));
+  const left=s.n-s.today+1;
+  $('#cNeed').textContent=total>=goal?'Done!':fmt(Math.ceil((goal-total)/left));
+}
+function renderMeta(){
+  setVal($('#bookTitle'),state.meta.title||'');setVal($('#leftOff'),state.meta.leftOff||'');setVal($('#authorIn'),state.meta.author||'');
+  if(document.activeElement!==$('#goalIn'))setVal($('#goalIn'),String(state.meta.goal||50000));
+  renderStats();
+}
+const VIEWS=['chapterView','bibleView','emptyView','loadView','setupView','reconnectView'];
+function showView(v){VIEWS.forEach(id=>$('#'+id).hidden=id!==v)}
+function syncOpen(){
+  if(!state.cur)return;
+  const {c,id}=state.cur,body=state.data[c][id];
+  if(!body||body.trashed||!inBook(body)){state.cur=null;pickDefault();return}
+  for(const [f,sel] of Object.entries(FIELDS[c]))setVal($(sel),body[f]!=null?body[f]:(f==='kind'?'Character':''));
+  syncCrumb();
+}
+function pickDefault(){
+  const chs=sortedChapters();
+  if(!chs.length){state.cur=null;showView('emptyView');$('#crumb').textContent=state.meta.title||'Untitled novel';return}
+  const last=ls.get('mwd-cur');let c='chapters',id=chs[0][0];
+  if(last){try{const p=JSON.parse(last);if(state.data[p.c]&&state.data[p.c][p.id]&&!state.data[p.c][p.id].trashed&&inBook(state.data[p.c][p.id])){c=p.c;id=p.id}}catch(e){}}
+  openItem(c,id,true);
+}
+function renderAll(){if(!state.loaded||!state.book)return;if(!state.cur)pickDefault();else syncOpen();renderSide();renderStats()}
+let rq=0;function scheduleRender(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;renderSide();renderStats();syncCrumb()})}
+function syncCrumb(){if(!state.cur)return;const b=state.data[state.cur.c][state.cur.id];if(b)$('#crumb').textContent=(state.meta.title||'Untitled novel')+'  ›  '+(state.cur.c==='chapters'?(b.title||'Untitled chapter'):'Bible: '+(b.name||'Unnamed'))}
+
+/* ---------- actions ---------- */
+function openItem(c,id,quiet){
+  if(!quiet)flush();
+  if(reading)stopReading();
+  state.cur={c,id};ls.set('mwd-cur',JSON.stringify({c,id}));
+  showView(c==='chapters'?'chapterView':'bibleView');
+  const body=state.data[c][id];
+  if(!body){state.cur=null;pickDefault();return}
+  for(const [f,sel] of Object.entries(FIELDS[c])){const e=$(sel);e.value=body[f]!=null?body[f]:(f==='kind'?'Character':'');if(e.tagName==='TEXTAREA')autosize(e)}
+  if(c==='chapters'){$('#sumBox').open=!!(body.summary)||ls.get('mwd-sum-open')==='1'}
+  app.classList.remove('drawer');
+  syncCrumb();renderSide();renderStats();
+  $('#main').scrollTop=0;
+}
+async function addChapter(){
+  if(!store||!state.book)return;
+  const chs=sortedChapters();
+  const order=chs.length?Math.max(...chs.map(([,x])=>x.order||0))+1:1;
+  const body={title:'Chapter '+(chs.length+1),order,text:'',summary:'',words:0,trashed:false,updatedAt:Date.now(),book:state.book};
+  const ref=store.collection('chapters').doc();
+  state.data.chapters[ref.id]=body;openItem('chapters',ref.id);
+  try{await ref.set(body);setSave('pending');flush()}catch(e){setSave('error');showStoreNote(e&&e.code==='quota_exceeded'?'Storage is full, so the new chapter could not be saved.':'The new chapter could not be saved.')}
+  const t=$('#chTitle');t.focus();t.select();
+}
+async function addBible(){
+  if(!store||!state.book)return;
+  const body={name:'',kind:'Character',details:'',trashed:false,updatedAt:Date.now(),book:state.book};
+  const ref=store.collection('bible').doc();
+  state.data.bible[ref.id]=body;openItem('bible',ref.id);
+  try{await ref.set(body)}catch(e){setSave('error')}
+  $('#bName').focus();
+}
+function moveChapter(id,dir){
+  const chs=sortedChapters(),i=chs.findIndex(([k])=>k===id),j=i+dir;
+  if(i<0||j<0||j>=chs.length)return;
+  /* renumber everything so orders stay clean whole numbers (they become the 01, 02… in file names) */
+  const ids=chs.map(([k])=>k);[ids[i],ids[j]]=[ids[j],ids[i]];
+  ids.forEach((k,n)=>{const ch=state.data.chapters[k];if(ch.order!==n+1){ch.order=n+1;queueSave('chapters/'+k,{order:n+1})}});
+  renderSide();
+}
+function trashCurrent(){
+  if(!state.cur)return;const {c,id}=state.cur;
+  state.data[c][id].trashed=true;queueSave(c+'/'+id,{trashed:true});
+  state.cur=null;ls.set('mwd-cur','');renderAll();
+}
+
+/* ---------- wiring ---------- */
+for(const c of ['chapters','bible']){
+  for(const [f,sel] of Object.entries(FIELDS[c])){
+    const e=$(sel);
+    e.addEventListener('input',()=>{
+      if(!state.cur||state.cur.c!==c)return;
+      const id=state.cur.id,body=state.data[c][id];if(!body)return;
+      body[f]=e.value;const fields={[f]:e.value,updatedAt:Date.now()};
+      if(f==='text'){fields.words=body.words=wc(e.value)}
+      if(e.tagName==='TEXTAREA')autosize(e);
+      queueSave(c+'/'+id,fields);scheduleRender();
+    });
+  }
+}
+function metaField(f,v){state.meta[f]=v;(state.metas[state.book]=state.metas[state.book]||{})[f]=v;if(state.book&&state.metas[state.book])queueSave('meta/'+state.book,{[f]:v})}
+$('#bookTitle').addEventListener('input',e=>{metaField('title',e.target.value);syncCrumb();renderBooks()});
+$('#leftOff').addEventListener('input',e=>metaField('leftOff',e.target.value));
+$('#authorIn').addEventListener('input',e=>metaField('author',e.target.value));
+$('#goalIn').addEventListener('input',e=>{const n=parseInt(String(e.target.value).replace(/[^0-9]/g,''),10);if(n>0){metaField('goal',n);renderStats()}});
+$('#goalIn').addEventListener('blur',()=>setVal($('#goalIn'),String(state.meta.goal||50000)));
+$('#sumBox').addEventListener('toggle',()=>{ls.set('mwd-sum-open',$('#sumBox').open?'1':'0');if($('#sumBox').open)autosize($('#chSummary'))});
+$('#addCh').onclick=addChapter;$('#startBtn').onclick=addChapter;$('#addBible').onclick=addBible;
+$('#trashCh').onclick=e=>arm(e.currentTarget,'Click again to move to trash',trashCurrent);
+$('#trashBible').onclick=e=>arm(e.currentTarget,'Click again to move to trash',trashCurrent);
+function setChart(open){$('#chartP').hidden=!open;$('#goalBtn').setAttribute('aria-expanded',String(open));$('#gChev').textContent=open?'Hide chart ▴':'Daily chart ▾';ls.set('mwd-chart',open?'1':'0');if(open){state.sel=null;renderChart()}}
+$('#goalBtn').onclick=()=>setChart($('#chartP').hidden);
+if(ls.get('mwd-chart')==='1')setChart(true);
+setInterval(()=>{if(state.loaded)rollDay().then(renderStats)},30000);
+$('#menuBtn').onclick=()=>app.classList.toggle('drawer');$('#scrim').onclick=()=>app.classList.remove('drawer');
+function setFocus(on){app.classList.toggle('focus',on);$('#focusBtn').textContent=on?'Leave focus':'Focus';if(on&&state.cur&&state.cur.c==='chapters')$('#editor').focus()}
+$('#focusBtn').onclick=()=>setFocus(!app.classList.contains('focus'));
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#askP').hidden){closeAsk();return}if(app.classList.contains('focus'))setFocus(false)}
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();flush()}
+});
+window.addEventListener('pagehide',flush);
+window.addEventListener('beforeunload',e=>{if(Object.keys(pending).length||(store&&store.busy&&store.busy())){flush();e.preventDefault();e.returnValue=''}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flush();else checkFolder()});
+window.addEventListener('focus',()=>checkFolder());
+window.addEventListener('resize',()=>{if(state.cur&&state.cur.c==='chapters')autosize($('#editor'))});
+
+/* keep the line being typed above the on-screen keyboard */
+let mirror=null,caretRq=0;
+const MIRROR_PROPS=['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','wordSpacing','textTransform','textIndent','paddingTop','paddingRight','paddingBottom','paddingLeft','borderTopWidth','borderRightWidth','borderBottomWidth','borderLeftWidth','boxSizing','tabSize'];
+function caretOffset(t){
+  if(!mirror){mirror=document.createElement('div');mirror.setAttribute('aria-hidden','true');
+    mirror.style.cssText='position:absolute;visibility:hidden;top:0;left:0;pointer-events:none;white-space:pre-wrap;overflow-wrap:break-word;word-wrap:break-word;border-style:solid;border-color:transparent;contain:layout;';
+    document.body.append(mirror)}
+  const cs=getComputedStyle(t);MIRROR_PROPS.forEach(p=>{mirror.style[p]=cs[p]});
+  mirror.style.width=t.offsetWidth+'px';
+  mirror.textContent=t.value.slice(0,t.selectionEnd);
+  const m=document.createElement('span');m.textContent='​';mirror.append(m);
+  const top=m.offsetTop;mirror.textContent='';return top;
+}
+function keepCaretVisible(){
+  const t=$('#editor');if(document.activeElement!==t)return;
+  const main=$('#main'),vv=window.visualViewport;
+  const viewBottom=vv?vv.offsetTop+vv.height:window.innerHeight;
+  const barBottom=$('.bar').getBoundingClientRect().bottom;
+  const lh=parseFloat(getComputedStyle(t).lineHeight)||30;
+  const y=t.getBoundingClientRect().top+caretOffset(t);
+  const room=lh*2;
+  if(y+lh+room>viewBottom)main.scrollTop+=Math.ceil(y+lh+room-viewBottom);
+  else if(y<barBottom+lh*0.5)main.scrollTop-=Math.ceil(barBottom+lh*0.5-y);
+}
+function queueCaret(){if(caretRq)return;caretRq=requestAnimationFrame(()=>{caretRq=0;keepCaretVisible()})}
+['input','click','keyup'].forEach(ev=>$('#editor').addEventListener(ev,queueCaret));
+$('#editor').addEventListener('focus',()=>{queueCaret();setTimeout(queueCaret,350)});
+if(window.visualViewport){visualViewport.addEventListener('resize',queueCaret);visualViewport.addEventListener('scroll',queueCaret)}
+
+/* ---------- read aloud (the browser's own free voice) ---------- */
+const canSpeak='speechSynthesis' in window&&typeof SpeechSynthesisUtterance==='function';
+let reading=false;
+function stopReading(){if(!canSpeak)return;reading=false;speechSynthesis.cancel();$('#readBtn').textContent='Read aloud'}
+function startReading(){
+  const t=$('#editor'),text=t.value;if(!text.trim()){toast('Nothing to read yet.');return}
+  let from=t.selectionStart||0;if(from>=text.length-1)from=0;
+  from=text.lastIndexOf('\n',from-1)+1;
+  /* one paragraph at a time: long single utterances get cut off in some browsers */
+  const parts=text.slice(from).split(/\n+/).map(s=>s.trim()).filter(s=>s&&!isBreak(s));
+  if(!parts.length)return;
+  speechSynthesis.cancel();reading=true;$('#readBtn').textContent='Stop reading';
+  const voice=chosenVoice();
+  parts.forEach((p,i)=>{const u=new SpeechSynthesisUtterance(p);if(voice){try{u.voice=voice;u.lang=voice.lang}catch(e){}}if(i===parts.length-1)u.onend=()=>{if(reading)stopReading()};u.onerror=()=>{if(reading&&i===parts.length-1)stopReading()};speechSynthesis.speak(u)});
+}
+/* voices: ones on this computer first; online ones are labelled, because they send the text away to be spoken */
+let voices=[];
+const ONLINE_NOTE="Online voice: the words being read are sent over the internet to the voice's company (usually Microsoft or Google) to be spoken. Pick one under \"On this computer\" to keep everything on your machine.";
+function chosenVoice(){const want=ls.get('mwd-voice');return voices.find(v=>v.voiceURI===want)||null}
+function fillVoices(){
+  if(!canSpeak)return;
+  voices=speechSynthesis.getVoices().slice();
+  const sel=$('#voiceSel');sel.textContent='';
+  $('#voiceRow').hidden=false;
+  if(!voices.length){
+    sel.append(el('option',null,'Browser default'));sel.disabled=true;
+    $('#voiceNote').textContent="This browser isn't sharing its list of voices, so Read aloud uses its default voice. (Brave hides the list for privacy. Chrome and Edge show it.)";
+    $('#voiceNote').hidden=false;return;
+  }
+  sel.disabled=false;$('#voiceNote').textContent=ONLINE_NOTE;
+  const lang=(navigator.language||'en').slice(0,2).toLowerCase();
+  const rank=v=>(v.lang||'').toLowerCase().startsWith(lang)?0:1;
+  const sorted=voices.slice().sort((x,y)=>rank(x)-rank(y)||String(x.name).localeCompare(String(y.name)));
+  const def=el('option',null,'Browser default');def.value='';sel.append(def);
+  for(const [label,local] of [['On this computer',true],['Online (text is sent away to be spoken)',false]]){
+    const list=sorted.filter(v=>!!v.localService===local);if(!list.length)continue;
+    const g=document.createElement('optgroup');g.label=label;
+    list.forEach(v=>{const o=el('option',null,v.name+(v.lang?' ('+v.lang+')':'')+(local?'':' · online'));o.value=v.voiceURI;g.append(o)});
+    sel.append(g);
+  }
+  const cur=chosenVoice();sel.value=cur?cur.voiceURI:'';
+  $('#voiceNote').hidden=!(cur&&!cur.localService);
+}
+if(canSpeak){
+  $('#readBtn').hidden=false;$('#readBtn').onclick=()=>reading?stopReading():startReading();
+  fillVoices();speechSynthesis.addEventListener('voiceschanged',fillVoices);
+  $('#voiceSel').onchange=e=>{ls.set('mwd-voice',e.target.value);const v=chosenVoice();$('#voiceNote').hidden=!(v&&!v.localService);if(reading){stopReading();startReading()}};
+}
+
+/* ---------- export ---------- */
+async function saveFile(name,data){
+  await flush();
+  if(downloads){
+    try{const r=await downloads.save({filename:name,data});if(r&&r.status==='saved')toast('Saved '+name)}
+    catch(e){const c=e&&e.code;if(c==='declined')return;toast(c==='rate_limited'?'A save is already open. Finish that one first.':'That file could not be saved here.')}
+    return;
+  }
+  if(inClaude){toast('Saving files is not available in this view.');return}
+  const blob=data instanceof Blob?data:new Blob([data],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},5000);toast('Saved '+name+' to your downloads');
+}
+const bookName=()=>fileSafe(state.meta.title||'Untitled novel');
+function chapterText(ch){return (ch.title||'Untitled chapter')+'\n\n'+(ch.text||'').replace(/\s+$/,'')+'\n'}
+const liveChapters=()=>sortedChapters().map(([,ch])=>ch);
+$('#expBook').onclick=()=>{
+  const chs=liveChapters();if(!chs.length){toast('No chapters to export yet.');return}
+  const title=state.meta.title||'Untitled novel',by=String(state.meta.author||'').trim();
+  saveFile(bookName()+'.txt',title+(by?'\nby '+by:'')+'\n\n\n'+chs.map(chapterText).join('\n\n* * *\n\n'));
+};
+$('#expChap').onclick=()=>{
+  if(!state.cur||state.cur.c!=='chapters'){toast('Open a chapter first.');return}
+  const ch=state.data.chapters[state.cur.id];saveFile(bookName()+' - '+fileSafe(ch.title||'chapter')+'.txt',chapterText(ch));
+};
+$('#expDocx').onclick=()=>{const chs=liveChapters();if(!chs.length){toast('No chapters to export yet.');return}saveFile(bookName()+'.docx',docxBlob(state.meta.title||'Untitled novel',String(state.meta.author||'').trim(),chs))};
+$('#expEpub').onclick=()=>{const chs=liveChapters();if(!chs.length){toast('No chapters to export yet.');return}saveFile(bookName()+'.epub',epubBlob(state.meta.title||'Untitled novel',String(state.meta.author||'').trim(),chs))};
+/* every book, laid out exactly like a desk folder, so it can be unzipped straight into one */
+$('#dlAll').onclick=async()=>{
+  await flush();
+  const D={chapters:state.data.chapters,bible:state.data.bible,meta:state.metas,days:state.rawDays};
+  const files=[],used=new Set();
+  Object.keys(state.metas).forEach(b=>{
+    let folder=store&&store.kind==='folder'?b:fileSafe((state.metas[b]||{}).title||'Untitled book'),n=2,base=folder;
+    while(used.has(folder.toLowerCase()))folder=base+' '+(n++);used.add(folder.toLowerCase());
+    serializeBook(D,b).files.forEach(f=>files.push({name:folder+'/'+f.path,data:f.text}));
+  });
+  if(!files.length){toast('Nothing to download yet.');return}
+  saveFile('Writing Desk '+ymd(new Date())+'.zip',makeZip(files));
+};
+
+/* ---------- ask Claude (only inside a Claude artifact) ---------- */
+let askCtl=null,askGone=false;
+const ASK_GONE=['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'];
+const P_SUM='You help a novelist keep track of their own book. Read the current chapter below and write a summary of it in 3 to 5 plain sentences: who is in it, what happens, and what has changed by the end. Use present tense. Spell names exactly as the chapter does. No praise, no critique, no suggestions. Reply with only the summary.';
+const P_NAMES='You help a novelist keep their book consistent. Compare the current chapter with the writer\'s bible and the other chapter summaries. Find (1) names in the chapter that look like misspellings or variants of a name in the bible or elsewhere in the chapter, and (2) details in the chapter that contradict the bible or the summaries, such as eye colour, age, relationships or abilities. Do not comment on style, spelling of ordinary words, or grammar. Reply with only a JSON array, one object per problem: {"issue": "one short sentence", "quote": "the exact words from the chapter, copied character for character, under 12 words", "bible": "what the bible or a summary says, or an empty string"}. Reply with [] if you find nothing.';
+const P_BIBLE='You help a novelist keep their writer\'s bible. From the current chapter, find named characters, places, things and groups. For each one not in the bible yet, suggest an entry. For each one already in the bible, suggest only details the chapter states that the bible does not have yet. Use only what the chapter actually says and never invent anything. Keep details short, one fact per line, for example "Eyes: bright sapphire". Reply with only a JSON array of {"name": string, "kind": "Character" | "Place" | "Thing" | "Group" | "Other", "details": string, "existing": boolean}. Reply with [] if there is nothing to add.';
+const P_STUCK='A novelist is stuck at the end of the current chapter below and wants a nudge, not a ghostwriter. Offer three clearly different directions the next few beats could go, numbered 1 to 3. Each is one or two plain sentences about what could happen. Do not write prose, dialogue or lines for them to use, and do not rewrite their text. Keep characters consistent with the bible and the summaries.';
+function askCopy(c){
+  if(ASK_GONE.includes(c))return 'Claude is not available on this page.';
+  return ({rate_limited:'Claude is busy, or you have reached a usage limit. Try again in a little while.',session_expired:'Sign in to Claude again, then try.',refused:'Claude would not answer that one. Try a different button.',invalid_json:'That answer came back jumbled. Try again.',prompt_too_large:'This chapter is too long to send in one go. Split it into two chapters and try again.',empty_completion:'Claude came back empty. Try again.'})[c]||'Something went wrong reaching Claude. Try again.';
+}
+function openAsk(){$('#askP').hidden=false;$('#askBtn').setAttribute('aria-expanded','true')}
+function closeAsk(){if(askCtl)askCtl.abort();$('#askP').hidden=true;$('#askBtn').setAttribute('aria-expanded','false');if(askGone)$('#askBtn').hidden=true}
+function setActs(busy){document.querySelectorAll('#askP [data-act]').forEach(b=>{b.disabled=busy})}
+function askMsg(t){const out=$('#askOut');out.textContent='';out.append(el('div','askp-msg',t));$('#askRow').textContent=''}
+function bookContext(max){
+  const parts=['Book title: '+(state.meta.title||'Untitled novel')];
+  const bib=Object.values(state.data.bible).filter(x=>!x.trashed&&inBook(x)&&String(x.name||'').trim());
+  parts.push("WRITER'S BIBLE:\n"+(bib.length?bib.map(b=>'- '+b.name+' ('+(b.kind||'Other')+'): '+String(b.details||'').replace(/\n+/g,'; ')).join('\n'):'(empty)'));
+  const cur=state.cur.id;
+  const others=sortedChapters().filter(([id,c])=>id!==cur&&String(c.summary||'').trim());
+  if(others.length)parts.push('SUMMARIES OF OTHER CHAPTERS, IN ORDER:\n'+others.map(([,c])=>'- '+(c.title||'Untitled')+': '+c.summary.trim()).join('\n'));
+  const ch=state.data.chapters[cur];let text=ch.text||'';
+  if(text.length>max)text='[earlier part of the chapter left out]\n'+text.slice(-max);
+  parts.push('CURRENT CHAPTER, '+(ch.title||'Untitled')+':\n<<<\n'+text+'\n>>>');
+  return parts.join('\n\n');
+}
+function applyBible(s){
+  const name=String(s.name||'').trim();if(!name)return;
+  const kind=KINDS.includes(s.kind)?s.kind:'Other',details=String(s.details||'').trim();
+  const hit=Object.entries(state.data.bible).find(([,b])=>!b.trashed&&inBook(b)&&String(b.name||'').trim().toLowerCase()===name.toLowerCase());
+  if(hit){const [id,b]=hit;const nd=String(b.details||'').trim()?String(b.details).trim()+'\n'+details:details;b.details=nd;queueSave('bible/'+id,{details:nd,updatedAt:Date.now()});renderAll();return}
+  const body={name,kind,details,trashed:false,updatedAt:Date.now(),book:state.book};
+  const ref=store.collection('bible').doc();state.data.bible[ref.id]=body;renderSide();
+  ref.set(body).catch(()=>setSave('error'));
+}
+function showInEditor(q){
+  const t=$('#editor'),i=t.value.indexOf(q);if(i<0)return;
+  t.focus();try{t.setSelectionRange(i,i+q.length)}catch(_){}
+  queueCaret();
+}
+async function runAsk(act){
+  if(!sample)return;
+  if(!state.cur||state.cur.c!=='chapters'){askMsg('Open a chapter first.');return}
+  const chId=state.cur.id,ch=state.data.chapters[chId];
+  if(!String(ch.text||'').trim()){askMsg('Write a little first, then ask.');return}
+  flush();
+  if(askCtl)askCtl.abort();
+  const ctl=askCtl=new AbortController();
+  const out=$('#askOut'),row=$('#askRow');
+  out.textContent='';out.append(el('span','thinking','Thinking…'));
+  row.textContent='';const stop=el('button','add','Stop');stop.onclick=()=>ctl.abort();row.append(stop);
+  setActs(true);
+  const opts={signal:ctl.signal,cache:false};
+  try{
+    if(act==='summary'||act==='stuck'){
+      const prompt=(act==='summary'?P_SUM:P_STUCK)+'\n\n'+bookContext(act==='summary'?150000:40000);
+      const r=await sample(prompt,{...opts,onText:({text})=>{out.textContent=text}});
+      const text=r.text.trim();out.textContent=text;row.textContent='';
+      if(r.truncated)row.append(el('span','askp-msg','Cut short.'));
+      if(act==='summary'){
+        const use=el('button','add','Use as chapter summary');
+        use.onclick=()=>{const c=state.data.chapters[chId];if(!c)return;c.summary=text;queueSave('chapters/'+chId,{summary:text,updatedAt:Date.now()});
+          if(state.cur&&state.cur.id===chId){setVal($('#chSummary'),text);$('#sumBox').open=true;autosize($('#chSummary'))}
+          use.textContent='Added to the chapter';use.disabled=true};
+        row.append(use);
+      }else{const again=el('button','add','Three more ideas');again.onclick=()=>runAsk('stuck');row.append(again)}
+    }else{
+      const arr=await sample.json((act==='names'?P_NAMES:P_BIBLE)+'\n\n'+bookContext(150000),opts);
+      const list=Array.isArray(arr)?arr.filter(x=>x&&typeof x==='object'):[];
+      out.textContent='';row.textContent='';
+      if(!list.length){out.append(el('div','thinking',act==='names'?'Nothing out of place. Names and details match.':'Nothing new to add to the bible.'));return}
+      list.forEach(s=>{
+        const c=el('div','sugg');
+        if(act==='names'){
+          c.append(el('div','t',String(s.issue||'Possible problem')));
+          if(s.quote)c.append(el('div','q','“'+String(s.quote)+'”'));
+          if(s.bible)c.append(el('div','d','Bible: '+String(s.bible)));
+          if(s.quote&&$('#editor').value.indexOf(String(s.quote))>=0){const a=el('div','acts'),b=el('button','add','Show me');b.onclick=()=>showInEditor(String(s.quote));a.append(b);c.append(a)}
+        }else{
+          const t=el('div','t',String(s.name||'Unnamed'));
+          t.append(el('span','k',(s.existing?'Add to ':'New ')+(KINDS.includes(s.kind)?s.kind:'Other')));
+          const a=el('div','acts'),add=el('button','add','Add'),skip=el('button','tbtn','Skip');
+          add.onclick=()=>{applyBible(s);add.textContent='Added';add.disabled=true;skip.remove()};
+          skip.onclick=()=>c.remove();a.append(add,skip);
+          c.append(t,el('div','d',String(s.details||'')),a);
+        }
+        out.append(c);
+      });
+    }
+  }catch(e){
+    const code=e&&e.code;
+    if(askCtl!==ctl&&code==='cancelled')return;
+    if(code==='cancelled'){out.textContent=String(e.text||'').trim();row.textContent='';if(!out.textContent)out.append(el('span','thinking','Stopped.'));return}
+    if(ASK_GONE.includes(code))askGone=true;
+    out.textContent=(code!=='refused'&&code!=='invalid_json'&&e&&e.text)?e.text:'';
+    out.append(el('div','askp-msg',askCopy(code)));row.textContent='';
+  }finally{
+    if(askCtl===ctl){askCtl=null;setActs(askGone)}
+  }
+}
+$('#askBtn').onclick=()=>{$('#askP').hidden?openAsk():closeAsk()};
+$('#askClose').onclick=closeAsk;
+document.querySelectorAll('#askP [data-act]').forEach(b=>{b.onclick=()=>runAsk(b.dataset.act)});
+
+/* ---------- books ---------- */
+const made={};
+function bookTitleOf(id){const m=state.metas[id]||{};return String(m.title||'').trim()||'Untitled book'}
+const bookIds=()=>Object.keys(state.metas).sort((a,b)=>(((state.metas[a]||{}).created||0)-((state.metas[b]||{}).created||0))||a.localeCompare(b));
+function loadMeta(){const key='meta/'+state.book;state.meta={...DEFAULT_META,...(state.metas[state.book]||{}),...(inflight[key]||{}),...(pending[key]||{})};renderMeta();syncCrumb()}
+function renderBooks(){
+  const sel=$('#bookSel');if(document.activeElement===sel)return;sel.textContent='';
+  bookIds().forEach(id=>{const o=el('option',null,bookTitleOf(id));o.value=id;if(id===state.book)o.selected=true;sel.append(o)});
+}
+async function switchBook(id){
+  if(id===state.book)return;
+  await flush();await trackDay();
+  state.book=id;ls.set('mwd-book',id);
+  state.cur=null;state.dayKey=null;state.dayStart=null;lastEnd=null;state.sel=null;
+  deriveDays();loadMeta();renderBooks();
+  if(!state.loaded)return;
+  renderAll();rollDay();
+}
+async function createBook(title){
+  const id=store.newBookId?store.newBookId(title):randId('bk');
+  const body={title,goal:50000,leftOff:'',author:'',created:Date.now()};
+  made[id]=body;state.metas[id]=body;
+  try{await store.collection('meta').doc(id).set(body)}catch(e){setSave('error')}
+  return id;
+}
+async function addBook(){
+  if(!store)return;
+  let title='New book';
+  if(store.kind==='folder'){const t=prompt('Name your new book. It also becomes the name of its folder.','New book');if(t==null||!t.trim())return;title=t.trim()}
+  const id=await createBook(title);
+  await switchBook(id);flush();
+  const t=$('#bookTitle');t.focus();t.select();
+}
+$('#bookSel').onchange=e=>{switchBook(e.target.value);e.target.blur()};
+$('#addBook').onclick=addBook;
+
+/* ---------- where the writing lives ---------- */
+function describeStore(){
+  const w=$('#whereLine');w.textContent='';
+  if(!store)return;
+  if(store.kind==='claude')w.append('Saving to ',el('b',null,'your Claude account'),'. It follows you to any device.');
+  else if(store.kind==='folder')w.append('Saving to the folder ',el('b',null,store.name),'. Every chapter is a plain file your AI agent can read.');
+  else w.append('Saving ',el('b',null,'in this browser only'),'. Good for trying it out. Download everything now and then, or move to a folder.');
+  $('#reloadBtn').hidden=store.kind!=='folder';
+  $('#changeStore').hidden=store.kind==='claude';
+  $('#expSec').hidden=inClaude&&!downloads;
+  $('#dlAll').hidden=inClaude&&!downloads;
+}
+let checking=false;
+async function checkFolder(force){
+  if(!store||store.kind!=='folder'||checking)return;
+  if(Object.keys(pending).length||saving||store.busy())return;
+  checking=true;
+  try{
+    if(force||await store.changedOnDisk()){
+      await store.reload();
+      toast(force?'Reloaded from the folder.':'Picked up changes from your folder.',3500);
+    }else if(force)toast('Already up to date.',2500);
+  }catch(e){toast('Could not read the folder. Is it still there?')}
+  finally{checking=false}
+}
+$('#reloadBtn').onclick=()=>checkFolder(true);
+
+function showSetup(fromDesk){
+  app.classList.add('nostore');
+  $('#crumb').textContent='Moss Writing Desk';
+  $('#pickFolder').disabled=!canFolder;$('#folderNo').hidden=canFolder;
+  $('#setupWarn').hidden=true;$('#setupBack').hidden=!fromDesk;
+  showView('setupView');
+}
+let setupFrom=null;
+$('#changeStore').onclick=()=>{flush();setupFrom=state.cur;showSetup(true)};
+$('#aboutBtn').onclick=()=>{setupFrom=state.cur;showSetup(true);$('#pickBrowser').disabled=!!store&&(store.kind==='browser'||store.kind==='claude');$('#pickFolder').disabled=!canFolder||(store&&store.kind==='claude')};
+$('#setupCancel').onclick=()=>{app.classList.remove('nostore');$('#pickBrowser').disabled=false;state.cur=null;if(setupFrom&&state.data[setupFrom.c]&&state.data[setupFrom.c][setupFrom.id])openItem(setupFrom.c,setupFrom.id,true);else renderAll()};
+async function chooseFolder(warnEl){
+  let h;
+  try{h=await window.showDirectoryPicker({id:'moss-writing-desk',mode:'readwrite'})}
+  catch(e){if(e&&e.name!=='AbortError'){warnEl.textContent='That folder could not be opened.';warnEl.hidden=false}return null}
+  try{if(await h.requestPermission({mode:'readwrite'})!=='granted'){warnEl.textContent='The browser did not allow saving to that folder.';warnEl.hidden=false;return null}}catch(e){}
+  const probe=makeFolderStore(h);
+  if(await probe.rootIsBook()){warnEl.textContent='That folder looks like one single book. Pick the folder that holds your books (the one above it), or a new empty folder.';warnEl.hidden=false;return null}
+  return h;
+}
+$('#pickFolder').onclick=async()=>{
+  const h=await chooseFolder($('#setupWarn'));if(!h)return;
+  await idbSet('folder',h);ls.set('mwd-mode','folder');
+  if(store){await flush();location.reload();return}
+  startFolder(h);
+};
+$('#pickBrowser').onclick=async()=>{
+  ls.set('mwd-mode','browser');
+  if(store){await flush();location.reload();return}
+  start(makeLocalStore());
+};
+$('#reconnectBtn').onclick=async()=>{
+  const h=await idbGet('folder');
+  try{if(h&&await h.requestPermission({mode:'readwrite'})==='granted'){startFolder(h);return}}catch(e){}
+  $('#reconnectWarn').textContent='The browser did not allow it. Try again, or choose the folder again.';$('#reconnectWarn').hidden=false;
+};
+$('#reconnectOther').onclick=async()=>{const h=await chooseFolder($('#reconnectWarn'));if(!h)return;await idbSet('folder',h);startFolder(h)};
+$('#reconnectBrowser').onclick=()=>{ls.set('mwd-mode','browser');start(makeLocalStore())};
+
+async function startFolder(h){
+  const fs=makeFolderStore(h);
+  showView('loadView');$('#crumb').textContent='Opening your desk…';
+  try{await fs.load()}catch(e){$('#loadWarn').textContent='That folder could not be read.';$('#loadWarn').hidden=false;return}
+  /* first visit with this folder: bring along anything already written in this browser */
+  const local=readLocal();
+  if(!Object.keys(fs.data.meta).length&&local&&local.meta&&Object.keys(local.meta).length){
+    const n=fs.importFrom(local);
+    try{await fs.sync()}catch(e){}
+    if(n)setTimeout(()=>toast('Copied '+n+(n===1?' book':' books')+' from this browser into your folder.',7000),400);
+  }
+  start(fs);
+}
+
+/* ---------- boot ---------- */
+let seeded=false;
+function start(s){
+  store=s;app.classList.remove('nostore');
+  if(store.kind!=='claude')setSave('saved');
+  describeStore();
+  showView('loadView');$('#crumb').textContent='Opening your desk…';
+  let gotCh=false;
+  const loadTimer=setTimeout(()=>{if(!gotCh)$('#loadWarn').hidden=false},10000);
+  const fail=()=>{clearTimeout(loadTimer);$('#loadWarn').hidden=false;$('#loadWarn').textContent='Your saved writing could not be reached. Reopen the page to try again.'};
+  store.collection('chapters').onSnapshot(s=>{
+    mergeSnap('chapters',s);
+    if(!s.metadata.fromCache&&!gotCh){gotCh=true;clearTimeout(loadTimer);state.loaded=true;rollDay()}
+    if(s.metadata.fromCache&&!state.loaded&&s.size){state.loaded=true}
+    renderAll();
+  },fail);
+  store.collection('bible').onSnapshot(s=>{mergeSnap('bible',s);renderAll()},()=>{});
+  store.collection('days').onSnapshot(s=>{const map={};s.docs.forEach(d=>{map[d.id]=d.data()});state.rawDays=map;deriveDays();renderChart()},()=>{});
+  store.collection('meta').onSnapshot(async s=>{
+    const metas={...made};s.docs.forEach(x=>{metas[x.id]=x.data()});
+    state.metas=metas;
+    const ids=bookIds();
+    if(!ids.length){
+      if(s.metadata.fromCache||seeded)return;
+      seeded=true;const id=await createBook('Untitled novel');state.book='';await switchBook(id);
+      if(store.sync)flush();return;
+    }
+    if(!state.book||!metas[state.book]){
+      if(s.metadata.fromCache&&!state.loaded)return;
+      const want=ls.get('mwd-book');state.book=metas[want]?want:ids[0];ls.set('mwd-book',state.book);state.cur=null;deriveDays();
+    }
+    loadMeta();renderBooks();renderAll();
+  },()=>{});
+}
+async function boot(){
+  applyTheme(ls.get('mwd-theme')||'dark');
+  if(window.claude&&typeof window.claude.use==='function'){
+    inClaude=true;
+    let db=null;
+    try{db=await window.claude.use('db')}catch(e){db=null}
+    try{downloads=await window.claude.use('downloads')}catch(e){downloads=null}
+    try{sample=await window.claude.use('sample')}catch(e){sample=null}
+    $('#askBtn').hidden=!sample;
+    if(db){start({kind:'claude',collection:c=>db.collection(c)});return}
+    inClaude=false;   /* not really inside Claude's saving, so fall through to the normal choices */
+  }
+  const mode=ls.get('mwd-mode');
+  if(mode==='folder'&&canFolder){
+    const h=await idbGet('folder');
+    if(h){
+      let p='prompt';try{p=await h.queryPermission({mode:'readwrite'})}catch(e){}
+      if(p==='granted'){startFolder(h);return}
+      app.classList.add('nostore');$('#crumb').textContent='Moss Writing Desk';
+      $('#reconnectName').textContent='Folder: '+h.name;showView('reconnectView');return;
+    }
+  }
+  if(mode==='browser'){start(makeLocalStore());return}
+  showSetup(false);
+}
+boot();
+})();
+</script>
+</body>
+</html>
