@@ -2,6 +2,8 @@
 
 You are helping a writer with a book kept in a **Moss Writing Desk** folder. The desk is a small writing app that saves every book as plain files, so you can read and write them too. This file tells you where everything lives and how to work without making a mess.
 
+**These are defaults, not rules.** Your writer's instructions always come first. If they want something done differently, do it their way, and offer to update this file to match.
+
 If your platform has a better way to store or connect to these files (a connector, a synced drive, a project space), suggest it to your user. The layout below works anywhere files do.
 
 ## First, ask one question
