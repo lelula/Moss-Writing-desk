@@ -31,8 +31,8 @@ The desk itself (writing, browser saving, export, Download everything) works in 
 
 **Folder auto-save** (the desk saving into a folder on its own as you type, which is what lets your AI agent work on the same files) needs a browser that lets web pages open a folder:
 
-- **Chrome** on a computer: tested, works.
-- **Edge** and **Opera** on a computer: use the same engine as Chrome and should work, but haven't been tested yet.
+- **Chrome** and **Edge** on a computer: tested, work. Edge also has the best-sounding voices for Read aloud (its "Natural" voices are online voices).
+- **Opera** on a computer: uses the same engine as Chrome and should work, but hasn't been tested yet.
 - **Brave:** switched off by default for privacy. Use browser saving and Download everything, or open the desk in Chrome or Edge for folder saving. Brave also hides its list of voices, so Read aloud uses its default voice.
 - **Firefox and Safari:** no folder saving. Browser saving and Download everything work.
 - **Phones and tablets:** no folder saving. Use the desk inside Claude, or browser saving.
