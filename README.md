@@ -4,24 +4,25 @@ A quiet place to write a novel, built to work with your AI.
 
 Chapters down the left, one page in the middle, a short summary on every chapter, and a writer's bible for the names and details that must stay consistent. It is one single web page. Nothing to install.
 
-![The Moss Writing Desk in the Moss theme](screenshot.png)
+**Try it now:** [lelula.github.io/Moss-Writing-desk](https://lelula.github.io/Moss-Writing-desk/)
+
+![The Moss Writing Desk](screenshot.png)
 
 ## How saving works
 
 Read this first, because it decides how you'll use the desk.
 
 - **Built for Claude.** Open the desk as a Claude artifact and your writing saves to your Claude account. It follows you to any device, phone included, and the **Claude** button helps with chapter summaries, name checks, bible entries and "I'm stuck" ideas.
-- **Works with other AI agents too.** Open `index.html` in Chrome or Edge on a computer and choose **A folder on this computer**. Every chapter becomes a plain text file in that folder, which any agent (Claude, Gemini, ChatGPT and others) can read and write. Put the folder inside Google Drive, Dropbox or OneDrive and it follows you to your other computers. Give your agent [AGENTS.md](AGENTS.md) so it knows the layout.
+- **Works with other AI agents too.** Open the desk in Chrome or Edge on a computer and choose **A folder on this computer**. Every chapter becomes a plain text file in that folder, which any agent (Claude, Gemini, ChatGPT and others) can read and write. Put the folder inside Google Drive, Dropbox or OneDrive and it follows you to your other computers. Give your agent [AGENTS.md](AGENTS.md) so it knows the layout.
 - **Just trying it out?** Choose **Just this browser**. Your writing stays in that one browser on that one device. AI agents can't reach it, and clearing your browser data clears it too. When you move to a folder later, the desk copies your books across for you.
 
 **Privacy:** this page is just the tool. Your writing stays with you. The page sends nothing anywhere: no accounts, no trackers, no web fonts. The only AI that sees your book is the one you choose to show it to, under that company's rules.
 
 ## Getting started
 
-1. Download `index.html` (and `AGENTS.md` if you'll use an agent).
-2. Open `index.html` in your browser. Chrome or Edge on a computer if you want folder saving (see Which browser? below).
-3. Pick where your writing should live.
-4. Start Chapter 1.
+1. Open the [live desk](https://lelula.github.io/Moss-Writing-desk/), or download `index.html` (and `AGENTS.md` if you'll use an agent) and open it in your browser. Chrome or Edge on a computer if you want folder saving (see Which browser? below).
+2. Pick where your writing should live.
+3. Start Chapter 1.
 
 To use it inside Claude instead, ask Claude to publish `index.html` as an artifact for you.
 
